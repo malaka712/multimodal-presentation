@@ -1,15 +1,14 @@
-Multimodal Presentation
-=======================
+# Multimodal Presentation
 
-# Write Description Stuff Here
+
+## Write Description Stuff Here
 TODO: create initial Android Project and upload..
 
 
-# Blog
+## Blog
 The Block is resided [here](http://multimodalpresentation.wordpress.com/). 
 
-# Examples for MD Syntax
-## Subcation
+## Examples for MD Syntax
 ### Bullets
 
  * bullet 1 
