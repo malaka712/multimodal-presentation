@@ -8,7 +8,7 @@ TODO: create initial Android Project and upload..
 # Blog
 The Block is resided [here](http://multimodalpresentation.wordpress.com/). 
 
-# Examples
+# Examples for MD Syntax
 ## Subcation
 ### Bullets
 
