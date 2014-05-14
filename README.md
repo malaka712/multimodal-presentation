@@ -15,7 +15,7 @@ The Block is resided [here](http://multimodalpresentation.wordpress.com/).
  * bullet 2
  * bullet 3
 
-### Indiced lists
+### Indexed lists
 
  1. item 1
  2. item 2 
