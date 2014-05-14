@@ -8,10 +8,8 @@ TODO: create initial Android Project and upload..
 # Blog
 The Block is resided [here](http://multimodalpresentation.wordpress.com/). 
 
-# Caption
+# Examples
 ## Subcation
-### Subsubcaption 
-Some examples following
 ### Bullets
 
  * bullet 1 
