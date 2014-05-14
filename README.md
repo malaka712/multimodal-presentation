@@ -8,6 +8,9 @@ TODO: create initial Android Project and upload..
 ## Blog
 The Block is resided [here](http://multimodalpresentation.wordpress.com/). 
 
+## GIT
+A tutorial for git may be found [here](https://www.atlassian.com/de/git/tutorial/git-basics)
+
 ## Examples for MD Syntax
 ### Bullets
 
