@@ -1,0 +1,18 @@
+# Build and Release Folders
+Multimodal-Presentation/bin/
+Multimodal-Presentation/bin-debug/
+Multimodal-Presentation/bin-release/
+Presentation-Desktop/bin/
+Presentation-Desktop/bin-debug/
+Presentation-Desktop/bin-release/
+
+# Other files and folders
+Multimodal-Presentation/.settings/
+Presentation-Desktop/.settings/
+
+# Android generated Files (e.g. R)
+Multimodal-Presentation/gen/
+
+# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
+# should NOT be excluded as they contain compiler settings and other important
+# information for Eclipse / Flash Builder.
