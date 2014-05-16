@@ -9,6 +9,7 @@ import javax.swing.SwingUtilities;
 
 import de.mmi.presentation_desktop.network.Server;
 import de.mmi.presentation_desktop.ui.HighlightFrame;
+import de.mmi.presentation_desktop.utils.Tester;
 
 public class App extends Thread{
 	
@@ -50,6 +51,8 @@ public class App extends Thread{
 					e.printStackTrace();
 					System.exit(1);
 				}
+				
+				new Tester(mapper, frame).start();
 				
 				Server s = new Server(mapper, frame);
 				s.start();
