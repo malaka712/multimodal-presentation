@@ -2,6 +2,8 @@ package de.mmi.presentation_desktop.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.Ellipse2D;
@@ -20,6 +22,10 @@ public class HighlightFrame extends JFrame implements GUIHandler{
 	private final static int FRAME_WIDTH = 300;
 
 	DrawPanel panel;
+	
+	Dimension screenDimensions;
+	int screenWidth;
+	int screenHeight;
 	
 	public HighlightFrame(){
 		super("Presenter");
@@ -41,30 +47,40 @@ public class HighlightFrame extends JFrame implements GUIHandler{
             }
         });
 		
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		screenWidth = gd.getDisplayMode().getWidth();
+		screenHeight = gd.getDisplayMode().getHeight();
+		
+		// full screen
+		//this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+		// no surroundings
+		this.setUndecorated(true);
+		// make background invisible
+		//this.setBackground(new Color(0, 0, 0, 0));
+		// not focusable (so presentation-program receives key events)
+		this.setFocusableWindowState(false);
 	}
 	
 	@Override
 	public void setVisible(boolean visible){
-		if(visible){
-			// full screen
-			//this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-			// no surroundings
-			this.setUndecorated(true);
-			// make background invisible
-			this.setBackground(new Color(0, 0, 0, 0));
-			// not focusable (so presentation-program receives key events)
-			this.setFocusableWindowState(false);
-		}
-		
 		// finally, set visible
 		super.setVisible(visible);
 		
+		if(visible){
+			toFront();
+			repaint();
+		}
 	}
 
 	@Override
 	public void onHighlight(float x, float y) {
-		Dimension d = new Dimension(800, 600);	
-		this.setBounds((int)(d.width*x), (int)(d.height*y), FRAME_WIDTH, FRAME_WIDTH);
+		this.setBounds((int)(screenWidth*x) - FRAME_WIDTH/2, (int)(screenHeight*y) - FRAME_WIDTH/2, FRAME_WIDTH, FRAME_WIDTH);
 		panel.startAnimation();
+		this.setVisible(true);
+	}
+	
+	@Override
+	public void hide(){
+		this.setVisible(false);
 	}
 }

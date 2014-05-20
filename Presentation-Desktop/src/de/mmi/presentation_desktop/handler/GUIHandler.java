@@ -8,4 +8,9 @@ public interface GUIHandler {
 	 * @param y The (relative ?) y-coordinate
 	 */
 	public void onHighlight(float x, float y);
+	
+	/**
+	 * This method is called when the Frame should be made invisible
+	 */
+	public void hide();
 }

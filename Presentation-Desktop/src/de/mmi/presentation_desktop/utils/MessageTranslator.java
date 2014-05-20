@@ -1,5 +1,9 @@
 package de.mmi.presentation_desktop.utils;
 
+import java.awt.event.KeyEvent;
+
+import de.mmi.presentation_desktop.network.MessageSet;
+
 public class MessageTranslator {
 
 	/**
@@ -8,7 +12,17 @@ public class MessageTranslator {
 	 * @return The keyCode as adapter from {@link java.awt.event.KeyEvent KeyEvent}
 	 */
 	public static int translateToKeyCode(String event){
-		// TODO: Map event to keyCode from KeyEvent
-		return 0;
+
+		int code = -1;
+		
+		if(event.equals(MessageSet.NEXT)){
+			code = KeyEvent.VK_DOWN;
+		}else if (event.equals(MessageSet.PREVIOUS)){
+			code = KeyEvent.VK_UP;
+		}else{
+			throw new IllegalArgumentException("Unkown Argument: " + event);
+		}
+		
+		return code;
 	}
 }
