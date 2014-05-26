@@ -30,7 +30,7 @@ public class HighlightFrame extends JFrame implements GUIHandler{
 	public HighlightFrame(){
 		super("Presenter");
 		
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		panel = new DrawPanel();
 		// don't show background in panel
 		panel.setOpaque(false);
@@ -56,7 +56,7 @@ public class HighlightFrame extends JFrame implements GUIHandler{
 		// no surroundings
 		this.setUndecorated(true);
 		// make background invisible
-		//this.setBackground(new Color(0, 0, 0, 0));
+		this.setBackground(new Color(0, 0, 0, 0));
 		// not focusable (so presentation-program receives key events)
 		this.setFocusableWindowState(false);
 	}
@@ -80,7 +80,7 @@ public class HighlightFrame extends JFrame implements GUIHandler{
 	}
 	
 	@Override
-	public void hide(){
+	public void hideFrame(){
 		this.setVisible(false);
 	}
 }
