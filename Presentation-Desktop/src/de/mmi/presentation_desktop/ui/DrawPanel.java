@@ -102,7 +102,7 @@ public class DrawPanel extends JPanel{
 				try{
 					Thread.sleep(SLEEP_TIME);
 				}catch(InterruptedException e){
-					e.printStackTrace();
+					return;
 				}
 			}
 			synchronized (lock) {

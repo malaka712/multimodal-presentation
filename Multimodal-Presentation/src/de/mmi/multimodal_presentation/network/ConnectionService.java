@@ -10,8 +10,10 @@ import com.google.gson.JsonObject;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 public class ConnectionService extends Service{
 
@@ -27,6 +29,8 @@ public class ConnectionService extends Service{
 	private Socket socket;
 	private BufferedWriter writer;
 	
+	private Handler mHandler;
+	
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
@@ -34,6 +38,9 @@ public class ConnectionService extends Service{
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		
+		if(mHandler == null)
+			mHandler = new Handler();
 		
 		if(intent != null){
 			String action = intent.getAction();
@@ -69,6 +76,14 @@ public class ConnectionService extends Service{
 					
 					socket = new Socket(InetAddress.getByName(ip.trim()), PORT);
 					writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+					
+					mHandler.post(new Runnable() {
+						
+						@Override
+						public void run() {
+							Toast.makeText(getApplicationContext(), "Connection established", Toast.LENGTH_SHORT).show();					
+						}
+					});
 					
 					Log.i("Service", "connected to ip " + ip);
 				}catch(IOException e){
@@ -144,9 +159,24 @@ public class ConnectionService extends Service{
 					
 					try {
 						socket.close();
+						mHandler.post(new Runnable() {
+							
+							@Override
+							public void run() {
+								Toast.makeText(getApplicationContext(), "Connection closed", Toast.LENGTH_SHORT).show();		
+							}
+						});
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+				}else{
+					mHandler.post(new Runnable() {
+						
+						@Override
+						public void run() {
+							Toast.makeText(getApplicationContext(), "No connection established, yet.",  Toast.LENGTH_SHORT).show();
+						}
+					});
 				}
 				stopSelf();
 			}

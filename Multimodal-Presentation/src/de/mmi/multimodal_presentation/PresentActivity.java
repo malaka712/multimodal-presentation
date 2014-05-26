@@ -12,6 +12,7 @@ import android.view.WindowManager;
 
 import com.qoppa.android.pdfViewer.fonts.StandardFontTF;
 import com.qoppa.viewer.QPDFViewerView;
+import com.qoppa.viewer.listeners.DocumentListener;
 
 import de.mmi.multimodal_presentation.network.ConnectionService;
 import de.mmi.multimodal_presentation.network.MessageSet;
@@ -45,7 +46,21 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 		*/
 		
 		pdfView.setActivity(this);
-
+		
+		/*pdfView.addDocumentListener(new DocumentListener() {
+			@Override
+			public void zoomChanged(float arg0) {}
+			
+			@Override
+			public void documentSaved(String arg0) {}
+			
+			@Override
+			public void documentOpened() {
+				previewReader.setDocument(pdfView.getDocument());
+				previewReader.goToPage(2);
+			}
+		});
+		*/
 		pdfView.open();
 		pdfView.getToolbar().setVisibility(View.GONE);
 		
@@ -89,7 +104,7 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 		//float relativeX = 0f;
 		//float relativeY = 0f;
 		
-		View pageView = pdfView.getPageView(pdfView.getCurrentPageNumber());
+		View pageView = pdfView.getPageView(pdfView.getCurrentPageNumber()-1);
 		
 		//int top = pageView.getTop();
 		//int bottom = pageView.getBottom();
