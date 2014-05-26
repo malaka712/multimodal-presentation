@@ -12,5 +12,5 @@ public interface GUIHandler {
 	/**
 	 * This method is called when the Frame should be made invisible
 	 */
-	public void hide();
+	public void hideFrame();
 }

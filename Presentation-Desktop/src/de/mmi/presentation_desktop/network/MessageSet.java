@@ -15,6 +15,7 @@ public interface MessageSet {
 	 */
 	public final static String KEY = "key";
 	public final static String HIGHLIGHT = "highlight";
+	public final static String EXIT = "exit";
 	
 	/*
 	 * Values for key-type

@@ -3,11 +3,9 @@ package de.mmi.presentation_desktop.network;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -60,8 +58,9 @@ public class Server extends Thread{
 				
 				JsonElement jsonPos = obj.get(MessageSet.HIGHLIGHT);
 				JsonElement jsonKey = obj.get(MessageSet.KEY);
+				JsonElement jsonExit = obj.get(MessageSet.EXIT);
 				
-				String name;
+
 				float[] position = null;
 				String key = null;
 				
@@ -71,6 +70,12 @@ public class Server extends Thread{
 					position = new float[2];
 					position[0] = (float)((JsonObject)jsonPos).get(MessageSet.X_COORD).getAsDouble();
 					position[1] = (float)((JsonObject)jsonPos).get(MessageSet.Y_COORD).getAsDouble();
+				}else if(jsonExit != null){
+					if(socket != null){
+						socket.close();
+					}
+					
+					System.exit(0);
 				}else{
 					System.out.println("null");
 				}
@@ -95,6 +100,7 @@ public class Server extends Thread{
 						public void run(){
 							System.out.println("received key event " + finalKey);
 							mKeyHandler.onKeyPressed(MessageTranslator.translateToKeyCode(finalKey));
+							mGUIHandler.hideFrame();
 						}
 					}.start();
 				}else if(position != null){
@@ -119,24 +125,5 @@ public class Server extends Thread{
 			}
 		}
 	}
-	
-	private float[] readPosition(JsonReader reader) throws IOException{
-		float[] retVal = new float[2];
-		
-		reader.beginObject();
-		String name;
-		while(reader.hasNext()){
-			name = reader.nextName();
-			if(name.equals(MessageSet.X_COORD)){
-				retVal[0] = (float) reader.nextDouble();
-			}else if(name.equals(MessageSet.Y_COORD)){
-				retVal[1] = (float) reader.nextDouble();
-			}else{
-				throw new IllegalArgumentException("Received unexpected JSON-Name: " + name);
-			}
-		}
-		reader.endObject();
-		System.out.println("Read [" + retVal[0] + ", " + retVal[1] + "]");
-		return retVal;
-	}
+
 }

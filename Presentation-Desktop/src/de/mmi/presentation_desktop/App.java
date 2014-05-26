@@ -2,19 +2,14 @@ package de.mmi.presentation_desktop;
 
 import java.awt.AWTException;
 import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.GraphicsDevice.WindowTranslucency;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Collections;
-import java.util.Enumeration;
+import java.awt.GraphicsEnvironment;
 
 import javax.swing.SwingUtilities;
 
 import de.mmi.presentation_desktop.network.Server;
 import de.mmi.presentation_desktop.ui.HighlightFrame;
-import de.mmi.presentation_desktop.utils.Tester;
+import de.mmi.presentation_desktop.ui.QRFrame;
 
 public class App extends Thread{
 	
@@ -46,6 +41,11 @@ public class App extends Thread{
 			
 			@Override
 			public void run() {
+				QRFrame qFrame = new QRFrame();
+				qFrame.init();
+				qFrame.setVisible(true);
+				
+				
 				HighlightFrame frame = new HighlightFrame();
 				//frame.setVisible(true);
 				
@@ -64,25 +64,6 @@ public class App extends Thread{
 			}
 		});
         
-        
-		try {
-			Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
-
-	        for (NetworkInterface netint : Collections.list(nets))
-	            displayInterfaceInformation(netint);
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
-	static void displayInterfaceInformation(NetworkInterface netint) throws SocketException {
-        System.out.printf("Display name: %s\n", netint.getDisplayName());
-        System.out.printf("Name: %s\n", netint.getName());
-        Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
-        for (InetAddress inetAddress : Collections.list(inetAddresses)) {
-        	System.out.printf("InetAddress: %s\n", inetAddress);
-        }
-        System.out.printf("\n");
-     }
 }
