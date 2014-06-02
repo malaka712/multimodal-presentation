@@ -197,14 +197,22 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 
 	@Override
 	public boolean onSingleTapUp(MotionEvent e) {
+		// TODO: Hier, Monika. 
 		float x = e.getX();
 		float y = e.getY();
 		
+		// Intent erstellen
 		Intent i = new Intent(getApplicationContext(), ConnectionService.class);
+		// Sagen, dass position gesendet werden soll
 		i.setAction(ConnectionService.HIGHLIGHT);
+		
+		// position als relativen wert (zwischen 0 und 1) als float eingeben
 		i.putExtra("X", x / (float)currentSlideViews[currentSlideViewIndex].getWidth());
 		i.putExtra("Y", y / (float)currentSlideViews[currentSlideViewIndex].getHeight());
 		
+		// service starten -> relative koordinaten werden dann automatisch gesendet, wenn die verbindung steht. 
+		// wenn die verbindung nicht steht, passiert nichts (auch kein crash)
+		// details kannst du dir (wenn du möchtest) in der ConnectionService Klasse anschauen
 		startService(i);
 		
 		return true;
