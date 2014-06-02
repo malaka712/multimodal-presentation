@@ -56,7 +56,7 @@ public class HighlightFrame extends JFrame implements GUIHandler{
 		// no surroundings
 		this.setUndecorated(true);
 		// make background invisible
-		this.setBackground(new Color(0, 0, 0, 0));
+		//this.setBackground(new Color(0, 0, 0, 0));
 		// not focusable (so presentation-program receives key events)
 		this.setFocusableWindowState(false);
 	}

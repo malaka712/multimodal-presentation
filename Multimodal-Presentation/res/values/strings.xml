@@ -9,5 +9,6 @@
     <string name="title_activity_present">PresentActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_gyro">Gyro</string>
+    <string name="last_slide">END</string>
 
 </resources>
