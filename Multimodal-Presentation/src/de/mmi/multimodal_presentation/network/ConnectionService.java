@@ -18,9 +18,11 @@ import android.widget.Toast;
 public class ConnectionService extends Service{
 
 	private final static int PORT = 62987;
+	private final static int BITSTREAM_PORT = 62986;
 	
 	public final static String CONNECT = "connect";
 	public final static String COMMAND = "command";
+	public final static String REQUEST_IMAGES = "get-imgs";
 	public final static String HIGHLIGHT = "highlight";
 	public final static String EXIT = "exit";
 	
@@ -57,6 +59,8 @@ public class ConnectionService extends Service{
 					sendHighlight(x,y);
 				}else if(action.equals(EXIT)){
 					exit();
+				}else if(action.equals(REQUEST_IMAGES)){
+					requestImages();
 				}
 			}
 		}
@@ -183,4 +187,23 @@ public class ConnectionService extends Service{
 		}.start();
 	}
 	
+	private void requestImages(){
+		new Thread(){
+			public void run(){
+				if(socket != null && writer != null && socket.isConnected()){
+					
+					JsonObject jObj = new JsonObject();
+					jObj.addProperty(MessageSet.IMAGE_REQUEST, MessageSet.IMAGE_REQUEST);
+					try {
+						writer.write(jObj.toString() + "\n");
+						writer.flush();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+			}
+		}.start();	
+	}
 }

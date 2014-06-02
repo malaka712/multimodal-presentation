@@ -25,15 +25,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import de.mmi.multimodal_presentation.network.ConnectionService;
 import de.mmi.multimodal_presentation.network.MessageSet;
+import de.mmi.multimodal_presentation.timer.CountdownTask;
 import de.mmi.multimodal_presentation.utils.BitmapProvider;
 
 public class PresentActivity extends Activity implements GestureDetector.OnGestureListener, OnTouchListener{
 
-	//private final static String TAG = "presenter";
+	private final static String TAG = "presenter";
     private GestureDetector mGestureDetector;
 	private ImageView[] currentSlideViews;
     private ImageView nextSlideView;
     private TextView lastSlideTextView;
+    private TextView timerTextView;
     
     // this value defines how many bitmaps are stored before the current bmp of main and after current bmp of preview
     // NOTE: If this value is 0, this will cause a crash when trying to move to next/previous slide, as we assume there is at least one image buffered.
@@ -51,6 +53,7 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
     private Animation shake;
     private final static int ANIMATION_DURATION = 400;
     
+    CountdownTask cTask;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +72,7 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 		
         nextSlideView = (ImageView) findViewById(R.id.preview_reader);
         lastSlideTextView = (TextView) findViewById(R.id.no_more_slide_text);
+        timerTextView = (TextView) findViewById(R.id.timer_text);
         
         rawImageResources = new int[]{
         		R.raw.test1,
@@ -87,6 +91,8 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 		
 		//updateBuffer();
 		initBmps();
+		
+		
 	}
 	
 	private void initBmps(){
@@ -110,7 +116,9 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 					public void run() {
 						// load first bitmap in main view and preview view
 						currentSlideViews[currentSlideViewIndex].setImageBitmap(bmpBuffer[0]);
-						nextSlideView.setImageBitmap(bmpBuffer[1]);						
+						nextSlideView.setImageBitmap(bmpBuffer[1]);		
+						cTask = new CountdownTask(10000L, timerTextView, PresentActivity.this);
+						cTask.start();
 					}
 				});
 				
@@ -179,6 +187,19 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 		
 		
 		shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+	}
+
+	
+	
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// if app is going to background, we forget about timer.. 
+		if(cTask != null){
+			cTask.cancel();
+			cTask = null;
+		}
 	}
 
 	@Override
@@ -328,6 +349,12 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 			
 			@Override
 			public void onAnimationEnd(Animation animation) {
+				
+				if(cTask != null)
+					cTask.cancel();
+				
+				cTask = new CountdownTask(10000L, timerTextView, PresentActivity.this);
+				cTask.start();
 			}
 		});
 		
@@ -366,6 +393,7 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 					if(bmpBuffer[i] == null){
 						//bmpBuffer[i] = BitmapProvider.getScaledBitmap(new File("" /* TODO: add file path here*/), size.x);
 						bmpBuffer[i] = BitmapProvider.getScaledBitmap(PresentActivity.this, rawImageResources[i], size.x);
+						Log.i(TAG, "got bitmap " + i);
 					}
 				}
 				
@@ -375,13 +403,15 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 				 * and after current cache-window. This is faster than iterating through whole image-array
 				 * but needs to be changed if there is a possibility to jump in presentation.*/
 				int previousBmp = (currentSlide-cacheWidth-1);
-				if(previousBmp >= 0){
+				if(previousBmp >= 0 && bmpBuffer[previousBmp].isRecycled()){
+					Log.i(TAG, "deleting img " + previousBmp);
 					bmpBuffer[previousBmp].recycle();
 					bmpBuffer[previousBmp] = null;
 				}
 				
 				int nextBmp = (currentSlide+cacheWidth+1);
-				if(nextBmp < bmpBuffer.length){
+				if(nextBmp < bmpBuffer.length && bmpBuffer[nextBmp].isRecycled()){
+					Log.i(TAG, "deleting img " + nextBmp);
 					bmpBuffer[nextBmp].recycle();
 					bmpBuffer[nextBmp] = null;
 				}
