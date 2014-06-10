@@ -50,7 +50,7 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
     private Bitmap[] bmpBuffer;
     private int[] rawImageResources;
     private File[] fileImageResources;
-    private ImageSource srcMode = ImageSource.RAW;
+    private ImageSource srcMode = ImageSource.PHONE;
     
     private int currentSlideViewIndex = 0;
     private int currentSlide = 0;
@@ -112,7 +112,7 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 						}
 					});
 					
-					basePath = list[0];
+					basePath = list[list.length-1];
 					
 					fileImageResources = basePath.listFiles();
 					
@@ -425,7 +425,7 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 				Point size = new Point();
 				display.getSize(size);
 				
-				for(int i=(currentSlide-cacheWidth); i<(currentSlide+cacheWidth+1); i++){
+				for(int i=(currentSlide-cacheWidth); i<=(currentSlide+cacheWidth+1); i++){
 					
 					// loop might be out of range
 					if(i<0)	continue;
@@ -455,7 +455,7 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 				}
 				
 				int nextBmp = (currentSlide+cacheWidth+1);
-				if(nextBmp < bmpBuffer.length && bmpBuffer[nextBmp].isRecycled()){
+				if(nextBmp < bmpBuffer.length && bmpBuffer[nextBmp] != null && bmpBuffer[nextBmp].isRecycled()){
 					Log.i(TAG, "deleting img " + nextBmp);
 					bmpBuffer[nextBmp].recycle();
 					bmpBuffer[nextBmp] = null;

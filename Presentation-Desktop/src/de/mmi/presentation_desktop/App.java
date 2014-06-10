@@ -59,7 +59,7 @@ public class App extends Thread{
 				
 				//new Tester(mapper, frame).start();
 				
-				Server s = new Server(mapper, frame);
+				Server s = new Server(mapper, frame, null);
 				s.start();
 			}
 		});

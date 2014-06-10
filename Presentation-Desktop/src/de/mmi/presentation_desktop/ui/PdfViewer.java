@@ -1,4 +1,4 @@
-package de.mmi.presentation_desktop;
+package de.mmi.presentation_desktop.ui;
 
 import java.awt.Image;
 import java.awt.event.KeyEvent;
@@ -22,12 +22,15 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
 
-import de.mmi.presentation_desktop.ui.DrawPanel;
+import de.mmi.presentation_desktop.handler.Controller;
+import de.mmi.presentation_desktop.handler.GUIHandler;
+import de.mmi.presentation_desktop.handler.KeyHandler;
 
-public class PdfViewer extends JFrame {
+
+public class PdfViewer extends JFrame implements KeyHandler{
 
 	List<PDPage> allPages = null;
-	List<ImageIcon> allImages = null;
+	ArrayList<ImageIcon> allImages = null;
 	PDFPagePanel pdfPanel;
 	int page = 0;
 	PDPage testPage;
@@ -39,9 +42,14 @@ public class PdfViewer extends JFrame {
 	JFrame var = this;
 	JLabel imageLabel;
 
-	public PdfViewer() {
-		init();
+	File pdfFile;
+	Controller controller;
+	
+	public PdfViewer(Controller controller) {
+		this.controller = controller;
+		//init();
 	}
+
 
 	public void nextPage() {
 		page++;
@@ -109,6 +117,7 @@ public class PdfViewer extends JFrame {
 	}
 
 	public void resizeAllImages() {
+		allImages.clear();
 		for (int i = 0; i < allPages.size(); i++) {
 			try {
 				testPage = (PDPage) allPages.get(i);
@@ -145,9 +154,19 @@ public class PdfViewer extends JFrame {
 		}
 
 	}
+	
+	public void setFile(File f){
+		pdfFile = f;
+		//readImage();
+	}
 
 	public void readImage() {
-		File PDF_Path = new File("test.pdf");
+		File PDF_Path;
+		if(pdfFile == null)
+			PDF_Path = new File("test.pdf");
+		else
+			PDF_Path = pdfFile;
+		
 		// File PDF_Path = new File("Democracy3-Manual.pdf");
 		PDDocument inputPDF;
 		try {
@@ -160,6 +179,8 @@ public class PdfViewer extends JFrame {
 
 			resizeAllImages();
 
+			controller.saveImages();
+			
 			/* JLabel Containing Image */
 			imageLabel = new JLabel(allImages.get(page));
 			imageLabel.setBounds(0, 0, var.getWidth(), var.getHeight());
@@ -189,7 +210,7 @@ public class PdfViewer extends JFrame {
 
 		this.setUndecorated(true);
 		this.setExtendedState(this.MAXIMIZED_BOTH);
-		this.setVisible(true);
+		//this.setVisible(true);
 		this.addKeyListener(new KeyListener() {
 
 			@Override
@@ -237,6 +258,26 @@ public class PdfViewer extends JFrame {
 		 * });
 		 */
 
+	}
+
+	@Override
+	public void onKeyPressed(int keyCode) {
+		System.out.println("received keyCode " + keyCode);
+		
+		if(keyCode == KeyEvent.VK_DOWN){
+			nextImage();
+			System.out.println("going to next img");
+		}
+		else if(keyCode == KeyEvent.VK_UP){
+			previousImage();
+			System.out.println("going to prev img");
+		}
+		
+	}
+	
+	public List<ImageIcon> getImages(){
+		ArrayList<ImageIcon> cloned = (ArrayList<ImageIcon>) allImages.clone();
+		return cloned;
 	}
 
 }

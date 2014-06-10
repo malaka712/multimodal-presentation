@@ -105,6 +105,13 @@ public class ConnectionService extends Service{
 					Log.i("Service", "connected to ip " + ip);
 				}catch(IOException e){
 					e.printStackTrace();
+					mHandler.post(new Runnable() {
+						
+						@Override
+						public void run() {
+							Toast.makeText(getApplicationContext(), "Connect failed", Toast.LENGTH_SHORT).show();					
+						}
+					});
 				}
 			}
 		}.start();
@@ -204,13 +211,17 @@ public class ConnectionService extends Service{
 			public void run(){
 				if(socket != null && writer != null && socket.isConnected()){
 					
+					Log.i("Service", "requesting images");
 					// first create an image-reader thread
 					if(dataReader != null && dataReader.isAlive()){
-						throw new IllegalStateException("Can't start read-thread before last one finished");
+						//throw new IllegalStateException("Can't start read-thread before last one finished");
+						dataReader.interrupt();
 					}else{
-						dataReader = new DataReadThread(getApplicationContext(), serverIp);
-						dataReader.start();
+						
 					}
+					
+					dataReader = new DataReadThread(getApplicationContext(), serverIp);
+					dataReader.start();
 					
 					// now actually request images
 					JsonObject jObj = new JsonObject();
@@ -267,6 +278,7 @@ public class ConnectionService extends Service{
 			try{
 				File mainDir = ctx.getFilesDir();
 				File dirFile = new File(mainDir.getAbsolutePath() + "/" + dateFormat.format(new Date(System.currentTimeMillis())));
+				dirFile.mkdir();
 				
 				int count = 0;
 				
@@ -291,11 +303,14 @@ public class ConnectionService extends Service{
 					}
 					
 				}
+				
+				Log.i("tag", "Done loading images.");
 
-				Toast.makeText(ctx, "Done loading images.", Toast.LENGTH_LONG).show();
+				//Toast.makeText(ctx, "Done loading images.", Toast.LENGTH_LONG).show();
 			}catch(IOException e){
 				e.printStackTrace();
-				Toast.makeText(ctx, "Error in loading images.", Toast.LENGTH_LONG).show();
+				Log.i("tag", "Error in loading images.");
+				//Toast.makeText(ctx, "Error in loading images.", Toast.LENGTH_LONG).show();
 			}finally{
 				if(dataSocket != null){
 					try {
