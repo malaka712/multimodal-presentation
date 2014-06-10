@@ -25,10 +25,19 @@
         android:layout_below="@+id/start_gyro_activity"
         android:text="@string/scan"/>
     
+    <Button
+        android:id="@+id/load_presentation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/scan_ip"
+        android:text="@string/load_presentation"/>
+    
     <Button 
         android:id="@+id/exit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/scan_ip"
+        android:layout_below="@+id/load_presentation"
         android:text="@string/exit"/>
+    
+    
 </RelativeLayout>

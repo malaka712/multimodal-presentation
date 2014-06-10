@@ -6,6 +6,7 @@
     <string name="gyro">Start Gyroscope</string>
     <string name="scan">Scan QR-Code</string>
     <string name="exit">Close Connection</string>
+    <string name="load_presentation">Download Presentation</string>
     <string name="title_activity_present">PresentActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_gyro">Gyro</string>

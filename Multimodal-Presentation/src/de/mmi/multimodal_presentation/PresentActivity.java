@@ -1,6 +1,8 @@
 package de.mmi.multimodal_presentation;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -30,6 +32,11 @@ import de.mmi.multimodal_presentation.utils.BitmapProvider;
 
 public class PresentActivity extends Activity implements GestureDetector.OnGestureListener, OnTouchListener{
 
+	public enum ImageSource{
+		RAW,
+		PHONE
+	}
+	
 	private final static String TAG = "presenter";
     private GestureDetector mGestureDetector;
 	private ImageView[] currentSlideViews;
@@ -42,6 +49,8 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
     private int cacheWidth = 1;
     private Bitmap[] bmpBuffer;
     private int[] rawImageResources;
+    private File[] fileImageResources;
+    private ImageSource srcMode = ImageSource.RAW;
     
     private int currentSlideViewIndex = 0;
     private int currentSlide = 0;
@@ -53,7 +62,7 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
     private Animation shake;
     private final static int ANIMATION_DURATION = 400;
     
-    CountdownTask cTask;
+    CountdownTask countdown;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,17 +82,7 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
         nextSlideView = (ImageView) findViewById(R.id.preview_reader);
         lastSlideTextView = (TextView) findViewById(R.id.no_more_slide_text);
         timerTextView = (TextView) findViewById(R.id.timer_text);
-        
-        rawImageResources = new int[]{
-        		R.raw.test1,
-        		R.raw.test2,
-        		R.raw.test3
-        };
-        
-        bmpBuffer = new Bitmap[rawImageResources.length];
-        for(int i=0; i<bmpBuffer.length; i++)
-        	bmpBuffer[i] = null;
-        
+       
         initAnimations();
         
 		// Don't fall asleep as we need to access screen the whole time while presenting
@@ -102,12 +101,54 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 				Point size = new Point();
 				display.getSize(size);
 
-				// TODO: move to image decoding from file
-				for(int i=0; i<=cacheWidth+1; i++){
-					if(i >= rawImageResources.length)
-						break;
+				// by default, get latest folder (TODO: settings to be done)
+				File basePath = getFilesDir();
+				File[] list = basePath.listFiles();
+				if(list != null && list.length > 0){
+					Arrays.sort(list, new Comparator<File>(){
+						@Override
+						public int compare(File lhs, File rhs) {
+							return lhs.getName().compareTo(rhs.getName());
+						}
+					});
 					
-					bmpBuffer[i] = BitmapProvider.getScaledBitmap(PresentActivity.this, rawImageResources[i], size.x);
+					basePath = list[0];
+					
+					fileImageResources = basePath.listFiles();
+					
+					bmpBuffer = new Bitmap[fileImageResources.length];
+					for(int i=0; i<bmpBuffer.length; i++)
+						bmpBuffer[i] = null;
+					
+					for(int i=0; i<=cacheWidth+1; i++){
+						if(i >= fileImageResources.length)
+							break;
+						
+						bmpBuffer[i] = BitmapProvider.getScaledBitmap(fileImageResources[i], size.x);
+					}
+					
+				}else{
+					
+					// demo mode if real loading doesn't work
+					srcMode = ImageSource.RAW;
+					
+					rawImageResources = new int[]{
+					   		R.raw.test1,
+					   		R.raw.test2,
+					   		R.raw.test3
+					   };
+					   
+					bmpBuffer = new Bitmap[rawImageResources.length];
+					for(int i=0; i<bmpBuffer.length; i++)
+					   bmpBuffer[i] = null;
+				        
+					
+					for(int i=0; i<=cacheWidth+1; i++){
+						if(i >= rawImageResources.length)
+							break;
+						
+						bmpBuffer[i] = BitmapProvider.getScaledBitmap(PresentActivity.this, rawImageResources[i], size.x);
+					}
 				}
 				
 				nextSlideView.post(new Runnable() {
@@ -117,8 +158,8 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 						// load first bitmap in main view and preview view
 						currentSlideViews[currentSlideViewIndex].setImageBitmap(bmpBuffer[0]);
 						nextSlideView.setImageBitmap(bmpBuffer[1]);		
-						cTask = new CountdownTask(10000L, timerTextView, PresentActivity.this);
-						cTask.start();
+						countdown = new CountdownTask(10000L, timerTextView, PresentActivity.this);
+						countdown.start();
 					}
 				});
 				
@@ -196,9 +237,9 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 	protected void onPause() {
 		super.onPause();
 		// if app is going to background, we forget about timer.. 
-		if(cTask != null){
-			cTask.cancel();
-			cTask = null;
+		if(countdown != null){
+			countdown.cancel();
+			countdown = null;
 		}
 	}
 
@@ -350,11 +391,11 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				
-				if(cTask != null)
-					cTask.cancel();
+				if(countdown != null)
+					countdown.cancel();
 				
-				cTask = new CountdownTask(10000L, timerTextView, PresentActivity.this);
-				cTask.start();
+				countdown = new CountdownTask(10000L, timerTextView, PresentActivity.this);
+				countdown.start();
 			}
 		});
 		
@@ -392,7 +433,11 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 					
 					if(bmpBuffer[i] == null){
 						//bmpBuffer[i] = BitmapProvider.getScaledBitmap(new File("" /* TODO: add file path here*/), size.x);
-						bmpBuffer[i] = BitmapProvider.getScaledBitmap(PresentActivity.this, rawImageResources[i], size.x);
+						
+						bmpBuffer[i] = 
+								srcMode == ImageSource.RAW ? 
+										BitmapProvider.getScaledBitmap(PresentActivity.this, rawImageResources[i], size.x) : 
+										BitmapProvider.getScaledBitmap(fileImageResources[i], size.x);
 						Log.i(TAG, "got bitmap " + i);
 					}
 				}

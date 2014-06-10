@@ -23,6 +23,7 @@ public class InitActivity extends Activity {
         Button gyroButton = (Button) findViewById(R.id.start_gyro_activity);
         Button scanButton = (Button) findViewById(R.id.scan_ip);
         Button exitButton = (Button) findViewById(R.id.exit);
+        Button downloadButton = (Button) findViewById(R.id.load_presentation);
         
         /*
          * Add onclicklisteners to start corresponding activity 
@@ -58,6 +59,16 @@ public class InitActivity extends Activity {
 			public void onClick(View v) {
 				Intent intent = new Intent(getApplicationContext(), ConnectionService.class);
 				intent.setAction(ConnectionService.EXIT);
+				startService(intent);
+			}
+		});
+        
+        downloadButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(), ConnectionService.class);
+				intent.setAction(ConnectionService.REQUEST_IMAGES);
 				startService(intent);
 			}
 		});

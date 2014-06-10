@@ -1,14 +1,22 @@
 package de.mmi.multimodal_presentation.network;
 
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import com.google.gson.JsonObject;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
@@ -28,8 +36,12 @@ public class ConnectionService extends Service{
 	
 	public final static String IP = "ip";
 	
+	private String serverIp = null;
+	
 	private Socket socket;
 	private BufferedWriter writer;
+	
+	private DataReadThread dataReader;
 	
 	private Handler mHandler;
 	
@@ -89,6 +101,7 @@ public class ConnectionService extends Service{
 						}
 					});
 					
+					serverIp = ip;
 					Log.i("Service", "connected to ip " + ip);
 				}catch(IOException e){
 					e.printStackTrace();
@@ -144,8 +157,7 @@ public class ConnectionService extends Service{
 	}
 	
 	private void exit(){
-		
-		
+			
 		new Thread(){
 			public void run(){
 
@@ -192,6 +204,15 @@ public class ConnectionService extends Service{
 			public void run(){
 				if(socket != null && writer != null && socket.isConnected()){
 					
+					// first create an image-reader thread
+					if(dataReader != null && dataReader.isAlive()){
+						throw new IllegalStateException("Can't start read-thread before last one finished");
+					}else{
+						dataReader = new DataReadThread(getApplicationContext(), serverIp);
+						dataReader.start();
+					}
+					
+					// now actually request images
 					JsonObject jObj = new JsonObject();
 					jObj.addProperty(MessageSet.IMAGE_REQUEST, MessageSet.IMAGE_REQUEST);
 					try {
@@ -202,8 +223,86 @@ public class ConnectionService extends Service{
 						e.printStackTrace();
 					}
 					
+				}else{
+					mHandler.post(new Runnable() {					
+						@Override
+						public void run() {
+							Toast.makeText(getApplicationContext(), "No connection established, yet.",  Toast.LENGTH_SHORT).show();
+						}
+					});
 				}
 			}
 		}.start();	
+	}
+	
+	
+	
+	/**
+	 * This class creates a socket and connects to the server to receive images. It automatically interrupts itself if last image was received.
+	 * This images are stored in internal storage (see Context.getFilesDir()) and are subfoldered by creation date.
+	 * @author patrick
+	 *
+	 */
+	private class DataReadThread extends Thread{
+				
+		private Socket dataSocket;
+		private DataInputStream dataInStream;
+		private Context ctx;
+		private DateFormat dateFormat;
+		private FileOutputStream fos;
+		
+		public DataReadThread(Context ctx, String ip){			
+			try {
+				dataSocket = new Socket(InetAddress.getByName(ip.trim()), BITSTREAM_PORT);
+				dataInStream = new DataInputStream(dataSocket.getInputStream());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			this.ctx = ctx;
+			dateFormat = new SimpleDateFormat("yyyy-MM-FF--HH-mm-ss", Locale.GERMANY);
+		}
+		
+		public void run(){
+			
+			try{
+				File mainDir = ctx.getFilesDir();
+				File dirFile = new File(mainDir.getAbsolutePath() + "/" + dateFormat.format(new Date(System.currentTimeMillis())));
+				
+				int count = 0;
+				
+				while(!isInterrupted()){
+					
+					int len = dataInStream.readInt();
+					
+					if(len == -1){
+						dataSocket.close();
+						this.interrupt();
+					}else{
+						byte[] buffer = new byte[len];
+					
+						dataInStream.readFully(buffer, 0, len);
+						
+						fos = new FileOutputStream(dirFile.getAbsolutePath() + "/" + count + ".jpg");
+						fos.write(buffer);
+						fos.flush();
+						fos.close();
+						
+						count++;
+					}
+					
+				}
+
+				Toast.makeText(ctx, "Done loading images.", Toast.LENGTH_LONG).show();
+			}catch(IOException e){
+				e.printStackTrace();
+				Toast.makeText(ctx, "Error in loading images.", Toast.LENGTH_LONG).show();
+			}finally{
+				if(dataSocket != null){
+					try {
+						dataSocket.close();
+					} catch (IOException e) {}
+				}
+			}
+		}
 	}
 }
