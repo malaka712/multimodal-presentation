@@ -1,12 +1,6 @@
 package de.mmi.multimodal_presentation;
 
 import java.io.File;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -33,6 +27,7 @@ import de.mmi.multimodal_presentation.network.ConnectionService;
 import de.mmi.multimodal_presentation.network.MessageSet;
 import de.mmi.multimodal_presentation.timer.CountdownTask;
 import de.mmi.multimodal_presentation.utils.BitmapProvider;
+import de.mmi.multimodal_presentation.utils.FileManager;
 
 public class PresentActivity extends Activity implements GestureDetector.OnGestureListener, OnTouchListener{
 
@@ -41,23 +36,6 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 		PHONE
 	}
 	
-	private final static Comparator<File> fileComparator = new Comparator<File>(){
-		
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-FF--HH-mm-ss", Locale.GERMANY);
-		
-		@Override
-		public int compare(File lhs, File rhs) {
-			int diff = 0;
-			try {
-				Date leftDate = dateFormat.parse(lhs.getName());
-				Date rightDate = dateFormat.parse(rhs.getName());
-				diff = leftDate.compareTo(rightDate);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			return diff;
-		}
-	};
 	
 	private final static String TAG = "presenter";
     private GestureDetector mGestureDetector;
@@ -124,16 +102,9 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 				display.getSize(size);
 
 				// by default, get latest folder (TODO: settings to be done)
-				File basePath = getFilesDir();
-				File[] list = basePath.listFiles();
-				if(list != null && list.length > 0){
-					
-					Arrays.sort(list, fileComparator);
-					
-					basePath = list[list.length-1];
-					
-					
-					fileImageResources = basePath.listFiles();
+				fileImageResources = FileManager.getLatestPresentationFiles(getApplicationContext());
+						
+				if(fileImageResources != null){
 					
 					bmpBuffer = new Bitmap[fileImageResources.length];
 					for(int i=0; i<bmpBuffer.length; i++)
@@ -410,8 +381,6 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 			
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				
-				timerTextView.setText(fileImageResources[currentSlide].getName());
 				
 				if(countdown != null)
 					countdown.cancel();

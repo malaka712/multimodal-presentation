@@ -1,13 +1,17 @@
 package de.mmi.multimodal_presentation;
 
-import de.mmi.multimodal_presentation.network.ConnectionService;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import de.mmi.multimodal_presentation.network.ConnectionService;
+import de.mmi.multimodal_presentation.settings.SettingsActivity;
 
 public class InitActivity extends Activity {
 
@@ -94,4 +98,32 @@ public class InitActivity extends Activity {
             }
         }
     }
+
+    
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// add menu to enable settings
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.init_activity_actions, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle presses on the action bar items
+	    switch (item.getItemId()) {
+	        case R.id.action_settings:
+	            openSettings();
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
+    
+	private void openSettings(){
+		Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+		startActivity(settingsIntent);
+	}
+    
 }

@@ -38,7 +38,14 @@
             android:label="@string/title_activity_gyro" >
         </activity>
         
+        <activity 
+            android:name="de.mmi.multimodal_presentation.settings.SettingsActivity"
+            android:label="@string/settings"></activity>
+        
+        <activity android:name="de.mmi.multimodal_presentation.settings.CacheClearActivity"/>
+        
         <service android:name="de.mmi.multimodal_presentation.network.ConnectionService"/>
+        
     </application>
 
 </manifest>

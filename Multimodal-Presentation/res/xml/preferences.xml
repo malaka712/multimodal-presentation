@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <PreferenceCategory
+        android:title="@string/pref_timer_title"
+        android:key="pref_key_timer_settings">
+        
+        <CheckBoxPreference 
+            android:key="pref_timer_enabled"
+            android:summary="@string/timer_enabled_summary"
+            android:title="@string/timer_enabled_title"
+            android:defaultValue="true"/>
+        
+	    <Preference 
+	        android:key="pref_timer_duration"
+	        android:summary="@string/timer_length_summary"
+	        android:title="@string/timer_length_title"/>
+
+    </PreferenceCategory>
+    
+    <PreferenceCategory 
+        android:title="@string/miscellaneous"
+        android:key="miscellaneous_category">
+        
+        <Preference
+            android:key="pref_clear_cache"
+            android:summary="@string/cache_summary"
+            android:title="@string/cache_title">
+        	<intent 
+        	    android:targetPackage="de.mmi.multimodal_presentation"
+        	    android:targetClass="de.mmi.multimodal_presentation.settings.CacheClearActivity"/>    
+        </Preference>
+    </PreferenceCategory>
+    
+</PreferenceScreen>

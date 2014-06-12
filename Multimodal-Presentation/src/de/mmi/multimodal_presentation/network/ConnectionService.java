@@ -15,6 +15,8 @@ import java.util.Locale;
 
 import com.google.gson.JsonObject;
 
+import de.mmi.multimodal_presentation.utils.FileManager;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -259,7 +261,7 @@ public class ConnectionService extends Service{
 		private Socket dataSocket;
 		private DataInputStream dataInStream;
 		private Context ctx;
-		private DateFormat dateFormat;
+		
 		private FileOutputStream fos;
 		private Handler handler;
 		
@@ -271,16 +273,15 @@ public class ConnectionService extends Service{
 				e.printStackTrace();
 			}
 			this.ctx = ctx;
-			dateFormat = new SimpleDateFormat("yyyy-MM-FF--HH-mm-ss", Locale.GERMANY);
+			
 			this.handler = handler;
 		}
 		
 		public void run(){
 			
 			try{
-				File mainDir = ctx.getFilesDir();
-				File dirFile = new File(mainDir.getAbsolutePath() + "/" + dateFormat.format(new Date(System.currentTimeMillis())));
-				dirFile.mkdir();
+							
+				File dirFile = FileManager.getNewPresentationFolder(ctx);
 				
 				int count = 0;
 				

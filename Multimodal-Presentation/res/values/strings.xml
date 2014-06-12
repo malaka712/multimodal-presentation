@@ -11,5 +11,17 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_gyro">Gyro</string>
     <string name="last_slide">END</string>
-
+    <string name="settings">Settings</string>
+    
+    <!-- Settings -->
+	<string name="pref_timer_title">Timer</string>
+	<string name="timer_length_summary">Determine the time for each slide</string>
+	<string name="timer_length_title">Timer duration</string>
+	
+	<string name="timer_enabled_summary">Disable/enable countdown timer for slide</string>
+	<string name="timer_enabled_title">Timer enabled</string>
+	
+	<string name="miscellaneous">Miscellaneous</string>
+	<string name="cache_title">Clear Cache</string>
+	<string name="cache_summary">Deletes all saved presentations</string>
 </resources>
