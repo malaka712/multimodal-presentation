@@ -177,9 +177,13 @@ public class PdfViewer extends JFrame implements KeyHandler{
 					PDDocumentCatalog.PAGE_MODE_FULL_SCREEN);
 			allPages = inputPDF.getDocumentCatalog().getAllPages();
 
+			
 			resizeAllImages();
 
 			controller.saveImages();
+			
+
+			inputPDF.close();
 			
 			/* JLabel Containing Image */
 			imageLabel = new JLabel(allImages.get(page));

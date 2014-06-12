@@ -5,6 +5,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -83,9 +84,14 @@ public class Controller implements GUIHandler {
 	public void saveImages(){
 		// this thread reads all imageicons, and saves them in a folder as jpegs
 		new Thread(){
+			
+			DecimalFormat format;
+			
 			public void run(){
 				if(pdfViewer == null)
 					return;
+				
+				format = new DecimalFormat("0000");
 				
 				List<ImageIcon> images = pdfViewer.getImages();
 				int count = 0;
@@ -109,7 +115,8 @@ public class Controller implements GUIHandler {
 				g2d.drawImage(img, 0, 0, null);
 				g2d.dispose();
 				try {
-					ImageIO.write(bi, "jpg", new File(folder.getAbsolutePath() + "/" + count + ".jpg"));
+					System.out.println("Saving " + format.format(count));
+					ImageIO.write(bi, "jpg", new File(folder.getAbsolutePath() + "/" + format.format(count) + ".jpg"));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

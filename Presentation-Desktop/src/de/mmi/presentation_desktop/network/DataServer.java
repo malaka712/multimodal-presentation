@@ -6,6 +6,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Date;
+
+import com.google.zxing.common.Comparator;
 
 public class DataServer extends Thread{
 	
@@ -31,7 +36,15 @@ public class DataServer extends Thread{
 	public void sendImages(File basePath) throws IOException{
 		
 		if(outStream != null && s != null && !s.isClosed()){
-			for(File curr : basePath.listFiles()){
+			File[] list = basePath.listFiles();
+			Arrays.sort(list, new java.util.Comparator<File>(){
+				@Override
+				public int compare(File lhs, File rhs) {
+					return lhs.getName().compareTo(rhs.getName());
+				}
+			});
+			
+			for(File curr : list){
 				byte[] data = getImageBytes(curr);
 				System.out.println("Sending length " + data.length);
 				outStream.writeInt(data.length);
