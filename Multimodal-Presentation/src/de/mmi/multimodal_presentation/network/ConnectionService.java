@@ -220,7 +220,7 @@ public class ConnectionService extends Service{
 						
 					}
 					
-					dataReader = new DataReadThread(getApplicationContext(), serverIp);
+					dataReader = new DataReadThread(getApplicationContext(), serverIp, mHandler);
 					dataReader.start();
 					
 					// now actually request images
@@ -261,8 +261,9 @@ public class ConnectionService extends Service{
 		private Context ctx;
 		private DateFormat dateFormat;
 		private FileOutputStream fos;
+		private Handler handler;
 		
-		public DataReadThread(Context ctx, String ip){			
+		public DataReadThread(Context ctx, String ip, Handler handler){			
 			try {
 				dataSocket = new Socket(InetAddress.getByName(ip.trim()), BITSTREAM_PORT);
 				dataInStream = new DataInputStream(dataSocket.getInputStream());
@@ -271,6 +272,7 @@ public class ConnectionService extends Service{
 			}
 			this.ctx = ctx;
 			dateFormat = new SimpleDateFormat("yyyy-MM-FF--HH-mm-ss", Locale.GERMANY);
+			this.handler = handler;
 		}
 		
 		public void run(){
@@ -306,11 +308,22 @@ public class ConnectionService extends Service{
 				
 				Log.i("tag", "Done loading images.");
 
-				//Toast.makeText(ctx, "Done loading images.", Toast.LENGTH_LONG).show();
+				handler.post(new Runnable() {				
+					@Override
+					public void run() {
+						Toast.makeText(ctx, "Done loading images.", Toast.LENGTH_LONG).show();
+					}
+				});
+				
 			}catch(IOException e){
 				e.printStackTrace();
 				Log.i("tag", "Error in loading images.");
-				//Toast.makeText(ctx, "Error in loading images.", Toast.LENGTH_LONG).show();
+				handler.post(new Runnable() {				
+					@Override
+					public void run() {
+						Toast.makeText(ctx, "Error in loading images.", Toast.LENGTH_LONG).show();
+					}
+				});
 			}finally{
 				if(dataSocket != null){
 					try {

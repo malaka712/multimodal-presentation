@@ -1,8 +1,12 @@
 package de.mmi.multimodal_presentation;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -36,6 +40,24 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 		RAW,
 		PHONE
 	}
+	
+	private final static Comparator<File> fileComparator = new Comparator<File>(){
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-FF--HH-mm-ss", Locale.GERMANY);
+		
+		@Override
+		public int compare(File lhs, File rhs) {
+			int diff = 0;
+			try {
+				Date leftDate = dateFormat.parse(lhs.getName());
+				Date rightDate = dateFormat.parse(rhs.getName());
+				diff = leftDate.compareTo(rightDate);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			return diff;
+		}
+	};
 	
 	private final static String TAG = "presenter";
     private GestureDetector mGestureDetector;
@@ -105,14 +127,11 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 				File basePath = getFilesDir();
 				File[] list = basePath.listFiles();
 				if(list != null && list.length > 0){
-					Arrays.sort(list, new Comparator<File>(){
-						@Override
-						public int compare(File lhs, File rhs) {
-							return lhs.getName().compareTo(rhs.getName());
-						}
-					});
+					
+					Arrays.sort(list, fileComparator);
 					
 					basePath = list[list.length-1];
+					
 					
 					fileImageResources = basePath.listFiles();
 					
@@ -340,6 +359,7 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 		
 		animateSlideChange(showView, currentSlideViews[currentSlideViewIndex], animInForward, animOutForward);
 		
+		
 		currentSlide++;
 		currentSlideViewIndex = (currentSlideViewIndex+1)%2;
 		
@@ -390,6 +410,8 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 			
 			@Override
 			public void onAnimationEnd(Animation animation) {
+				
+				timerTextView.setText(fileImageResources[currentSlide].getName());
 				
 				if(countdown != null)
 					countdown.cancel();
