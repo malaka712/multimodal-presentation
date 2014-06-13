@@ -5,8 +5,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class DrawPanel extends JPanel{
 
@@ -31,7 +34,7 @@ public class DrawPanel extends JPanel{
 	
 	private boolean shade = false;
 	
-	private AnimatorThread animThread;
+	private Timer timer;
 	
 	private final static Object lock = new Object();
 	
@@ -71,48 +74,46 @@ public class DrawPanel extends JPanel{
 	}
 	
 	public void startAnimation(){
-		if(animThread != null && animThread.isAlive()){
-			animThread.interrupt();
+		
+		if(timer != null && timer.isRunning()){
+			timer.stop();
 		}
 		
-		// TODO: use better animation (i bet there is some in java..)
-		animThread = new AnimatorThread();
-		animThread.start();
+		AnimationActionListener listener = new AnimationActionListener(200);
+		timer = new Timer(3, listener);
+		timer.start();
 	}
 	
-	private class AnimatorThread extends Thread{
+	
+	private class AnimationActionListener implements ActionListener{
 		
-		private final static long SLEEP_TIME = 2L;
-		private final static int STEPS = 200;
 		private final static double END_VALUE = 1.0;
 		private final static double START_VALUE = 3.0;
+		private double stepSize;
+		private int step;
 		
-		public void run(){
-			double stepSize = (START_VALUE - END_VALUE) / (float)STEPS;
-			int val;
+		public AnimationActionListener(int steps){
+			super();
+			stepSize = (START_VALUE - END_VALUE) / (double)steps;
+			step = 0;
+			
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			int val = (int) Math.round(((START_VALUE - (double)step * stepSize) * DEFAULT_DIAMETER));
 			synchronized (lock) {
-				shade = true;
-			}
-			for(int i=0; i<STEPS && !isInterrupted(); i++){
-				val = (int) Math.round(((START_VALUE - (double)i * stepSize) * DEFAULT_DIAMETER));
-				synchronized (lock) {
-					diameter = val;
-				}
-				repaint();
-				try{
-					Thread.sleep(SLEEP_TIME);
-				}catch(InterruptedException e){
-					return;
-				}
-			}
-			synchronized (lock) {
-				shade = false;
+				diameter = val;
 			}
 			
 			repaint();
+			
+			step++;
+			
+			if(step == 200)
+				timer.stop();
 		}
-		
-	}
-
+	};
 	
 }
