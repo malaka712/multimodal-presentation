@@ -8,14 +8,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import com.google.gson.JsonObject;
-
-import de.mmi.multimodal_presentation.utils.FileManager;
 
 import android.app.Service;
 import android.content.Context;
@@ -24,6 +16,10 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.google.gson.JsonObject;
+
+import de.mmi.multimodal_presentation.utils.FileManager;
 
 public class ConnectionService extends Service{
 
@@ -34,6 +30,8 @@ public class ConnectionService extends Service{
 	public final static String COMMAND = "command";
 	public final static String REQUEST_IMAGES = "get-imgs";
 	public final static String HIGHLIGHT = "highlight";
+	public final static String POINTER = "point";
+	public final static float HIDE_POINTER = -2.0f;
 	public final static String EXIT = "exit";
 	
 	public final static String IP = "ip";
@@ -70,11 +68,15 @@ public class ConnectionService extends Service{
 				}else if(action.equals(HIGHLIGHT)){
 					float x = intent.getFloatExtra("X", 0f);
 					float y = intent.getFloatExtra("Y", 0f);
-					sendHighlight(x,y);
+					sendHighlight(HIGHLIGHT, x,y);
 				}else if(action.equals(EXIT)){
 					exit();
 				}else if(action.equals(REQUEST_IMAGES)){
 					requestImages();
+				}else if(action.equals(POINTER)){
+					float x = intent.getFloatExtra("X", 0f);
+					float y = intent.getFloatExtra("Y", 0f);
+					sendHighlight(POINTER, x, y);
 				}
 			}
 		}
@@ -131,7 +133,6 @@ public class ConnectionService extends Service{
 						writer.write(jObj.toString() + "\n");
 						writer.flush();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					
@@ -140,7 +141,7 @@ public class ConnectionService extends Service{
 		}.start();	
 	}
 	
-	private void sendHighlight(final float x, final float y){
+	private void sendHighlight(final String type, final float x, final float y){
 		new Thread(){
 			public void run(){
 				if(socket != null && writer != null && socket.isConnected()){
@@ -150,13 +151,12 @@ public class ConnectionService extends Service{
 					jObj.addProperty(MessageSet.Y_COORD, (double)y);
 					
 					JsonObject posObj = new JsonObject();
-					posObj.add(MessageSet.HIGHLIGHT, jObj);
+					posObj.add(type, jObj);
 					
 					try {
 						writer.write(posObj.toString() + "\n");
 						writer.flush();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					
@@ -178,7 +178,6 @@ public class ConnectionService extends Service{
 						writer.write(jObj.toString() + "\n");
 						writer.flush();
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 					
@@ -232,7 +231,6 @@ public class ConnectionService extends Service{
 						writer.write(jObj.toString() + "\n");
 						writer.flush();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					

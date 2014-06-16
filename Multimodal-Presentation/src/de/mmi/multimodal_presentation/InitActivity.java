@@ -24,7 +24,6 @@ public class InitActivity extends Activity {
          * Get buttons via ID (as defined in layout-file)
          */
         Button presentButton = (Button) findViewById(R.id.start_present_activity);
-        Button gyroButton = (Button) findViewById(R.id.start_gyro_activity);
         Button scanButton = (Button) findViewById(R.id.scan_ip);
         Button exitButton = (Button) findViewById(R.id.exit);
         Button downloadButton = (Button) findViewById(R.id.load_presentation);
@@ -39,15 +38,7 @@ public class InitActivity extends Activity {
 				startActivity(actInt);
 			}
 		});
-        
-        gyroButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent actInt = new Intent(getApplicationContext(), GyroActivity.class);
-				startActivity(actInt);
-			}
-		});
-        
+            
         scanButton.setOnClickListener(new View.OnClickListener() {	
 			@Override
 			public void onClick(View v) {

@@ -12,17 +12,10 @@
         android:text="@string/present"/>
     
     <Button
-        android:id="@+id/start_gyro_activity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/start_present_activity"
-        android:text="@string/gyro"/>
-    
-    <Button
         android:id="@+id/scan_ip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/start_gyro_activity"
+        android:layout_below="@+id/start_present_activity"
         android:text="@string/scan"/>
     
     <Button

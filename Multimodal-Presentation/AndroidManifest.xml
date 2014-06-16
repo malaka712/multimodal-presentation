@@ -33,10 +33,6 @@
             android:configChanges="orientation"
     		android:screenOrientation="portrait">
         </activity>
-        <activity
-            android:name="de.mmi.multimodal_presentation.GyroActivity"
-            android:label="@string/title_activity_gyro" >
-        </activity>
         
         <activity 
             android:name="de.mmi.multimodal_presentation.settings.SettingsActivity"
