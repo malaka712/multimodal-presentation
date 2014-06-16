@@ -255,10 +255,11 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 		
 		// Intent erstellen
 		Intent i = new Intent(getApplicationContext(), ConnectionService.class);
-		// Sagen, dass position gesendet werden soll
+		// Sagen, dass position gesendet werden soll, allerdings bitte ConnectionService.POINTER benutzen anstatt HIGHLIGHT
 		i.setAction(ConnectionService.HIGHLIGHT);
 		
 		// position als relativen wert (zwischen 0 und 1) als float eingeben
+		// Wenn der pointer versteckt werden soll, hier ConnectionService.HIDE_POINTER für "X" UND "Y" übergeben
 		i.putExtra("X", x / (float)currentSlideViews[currentSlideViewIndex].getWidth());
 		i.putExtra("Y", y / (float)currentSlideViews[currentSlideViewIndex].getHeight());
 		
