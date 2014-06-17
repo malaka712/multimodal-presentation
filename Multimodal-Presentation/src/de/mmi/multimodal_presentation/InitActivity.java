@@ -27,6 +27,7 @@ public class InitActivity extends Activity {
         Button scanButton = (Button) findViewById(R.id.scan_ip);
         Button exitButton = (Button) findViewById(R.id.exit);
         Button downloadButton = (Button) findViewById(R.id.load_presentation);
+        Button settingsButton = (Button) findViewById(R.id.settings_button);
         
         /*
          * Add onclicklisteners to start corresponding activity 
@@ -42,9 +43,13 @@ public class InitActivity extends Activity {
         scanButton.setOnClickListener(new View.OnClickListener() {	
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-				intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-				startActivityForResult(intent, 0);		
+				new Thread(){
+					public void run(){
+						Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+						intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+						startActivityForResult(intent, 0);	
+					}
+				}.start();	
 			}
 		});
         
@@ -65,6 +70,14 @@ public class InitActivity extends Activity {
 				Intent intent = new Intent(getApplicationContext(), ConnectionService.class);
 				intent.setAction(ConnectionService.REQUEST_IMAGES);
 				startService(intent);
+			}
+		});
+        
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				openSettings();
 			}
 		});
         //startService()

@@ -3,34 +3,108 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    android:background="@drawable/init_activity_background"
     tools:context="${packageName}.${activityClass}" >
 
-    <Button 
-        android:id="@+id/start_present_activity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/present"/>
     
+    <TextView 
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="@string/init_title"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="@android:color/black"/>
+    
+    <Button
+        android:id="@+id/settings_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/title"
+		android:layout_alignRight="@+id/instructions_img"
+		android:background="@drawable/ic_action_settings"/>
+    
+        
     <Button
         android:id="@+id/scan_ip"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/start_present_activity"
-        android:text="@string/scan"/>
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:background="@drawable/button_background"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/title"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="15dp"
+        android:text="@string/scan"
+        android:textStyle="bold"/>
     
+    <!-- remove/hide for real version -->
     <Button
-        android:id="@+id/load_presentation"
+        android:id="@+id/load_presentation" 
+        android:layout_width="wrap_content"
+        android:padding="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_height="45dp"
+        android:background="@drawable/button_background"
+        android:layout_alignBottom="@+id/scan_ip"
+        android:layout_toRightOf="@+id/scan_ip"
+        android:text="@string/load_presentation"/>
+    
+    <!-- remove/hide for real version.. or keep? Closing connection would be good.. -->
+    <Button 
+        android:id="@+id/exit"	
+        android:layout_width="wrap_content"
+        android:padding="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_height="45dp"
+        android:background="@drawable/button_background"
+        android:layout_alignBottom="@+id/scan_ip"
+        android:layout_toLeftOf="@+id/scan_ip"
+        android:text="@string/exit"/>
+    
+    <ImageView 
+        android:id="@+id/instructions_img"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/scan_ip"
-        android:text="@string/load_presentation"/>
+        android:adjustViewBounds="true"
+        android:scaleType="centerInside"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:src="@raw/instructions_big"
+        android:contentDescription="@string/instructions_description"/>
     
+    <!-- enable=false for real version, enable=true will be set after dl images -->
     <Button 
-        android:id="@+id/exit"
+        android:id="@+id/start_present_activity"
         android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/button_background"
+        android:text="@string/present"
+        android:textStyle="bold"
+        android:textSize="28sp"
+        android:enabled="true" 
+        android:layout_below="@+id/instructions_img"/>
+    
+    <TextView
+        android:id="@+id/good_luck_text"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/load_presentation"
-        android:text="@string/exit"/>
+        android:layout_below="@+id/start_present_activity"
+        android:text="@string/good_luck"
+        android:textSize="24sp"
+        android:textStyle="bold|italic"
+        android:textColor="#AA0000"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="10dp"/>
     
     
 </RelativeLayout>
