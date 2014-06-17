@@ -4,6 +4,8 @@
 ## Write Description Stuff Here
 TODO: create initial Android Project and upload..
 
+![alt tag] (./Current-Status/Screenshot_2014-06-17-21-58-52.png)
+![alt tag] (./Current-Status/Screenshot_2014-06-17-21-58-56.png)
 
 ## Blog
 The Block is resided [here](http://multimodalpresentation.wordpress.com/). 
