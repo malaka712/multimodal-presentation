@@ -13,6 +13,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -47,7 +48,7 @@ public class PdfViewer extends JFrame implements GUIHandler {
 
 	public void nextPage() {
 		page++;
-		if (page > allPages.size()-1)
+		if (page > allPages.size() - 1)
 			page = 0;
 		testPage = (PDPage) allPages.get(page);
 		pdfPanel.setPage(testPage);
@@ -67,7 +68,7 @@ public class PdfViewer extends JFrame implements GUIHandler {
 
 	public void nextImage() {
 		page++;
-		if (page > allImages.size()-1)
+		if (page > allImages.size() - 1)
 			page = 0;
 		imageLabel.setIcon(allImages.get(page));
 		this.repaint();
@@ -76,7 +77,7 @@ public class PdfViewer extends JFrame implements GUIHandler {
 	public void previousImage() {
 		page--;
 		if (page < 0)
-			page = allImages.size()-1;
+			page = allImages.size() - 1;
 		imageLabel.setIcon(allImages.get(page));
 		this.repaint();
 	}
@@ -85,13 +86,12 @@ public class PdfViewer extends JFrame implements GUIHandler {
 	public void goFullScreen() {
 		System.out.println("Hello Fullscreen World!");
 	}
-	
-	public void insertPointer(){
+
+	public void insertPointer() {
 		pointer = new DrawPanel();
 		pointer.setOpaque(false);
 		this.add(pointer);
 		pointer.startAnimation();
-		
 	}
 
 	public void readPage() {
@@ -197,6 +197,8 @@ public class PdfViewer extends JFrame implements GUIHandler {
 		// readPage();
 		readImage();
 
+		insertPointer();
+		
 		this.setUndecorated(true);
 		this.setExtendedState(this.MAXIMIZED_BOTH);
 		this.setVisible(true);
@@ -260,7 +262,7 @@ public class PdfViewer extends JFrame implements GUIHandler {
 	@Override
 	public void hideFrame() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

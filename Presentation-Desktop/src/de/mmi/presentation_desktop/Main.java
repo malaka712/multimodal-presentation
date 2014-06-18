@@ -31,12 +31,13 @@ public class Main {
 	
 	public Main(){
 		PdfViewer viewer = new PdfViewer();
-		viewer.insertPointer();
 		QRFrame qr = new QRFrame();
 		qr.init();
 		qr.setVisible(true);
-		viewer.onHighlight(400, 400);
+		viewer.onHighlight(100, 100);
+		viewer.onHighlight(300, 300);
 		Server server = new Server(null, viewer);
+		server.start();
 		//MyServer server = new MyServer(viewer.allImages);
 		//server.start();
 	}

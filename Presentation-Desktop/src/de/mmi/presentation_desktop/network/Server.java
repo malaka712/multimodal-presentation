@@ -41,6 +41,7 @@ public class Server extends Thread{
 	public void run(){
 		try {
 			sSocket = new ServerSocket(PORT);
+			System.out.println("before connection");
 			Socket socket = sSocket.accept();
 			System.out.println("accepted");
 			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
