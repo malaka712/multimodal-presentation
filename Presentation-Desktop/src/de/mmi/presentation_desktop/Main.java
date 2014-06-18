@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import javax.sql.rowset.serial.SerialArray;
 import javax.swing.JFrame;
 
 import org.apache.pdfbox.pdfviewer.PDFPagePanel;
@@ -16,13 +17,33 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.util.operator.NextLine;
 
+import de.mmi.presentation_desktop.handler.KeyHandler;
+import de.mmi.presentation_desktop.network.MyServer;
+import de.mmi.presentation_desktop.network.Server;
 import de.mmi.presentation_desktop.ui.DrawPanel;
+import de.mmi.presentation_desktop.ui.QRFrame;
 
 public class Main {
+	
+	PdfViewer viewer;
+	QRFrame qr;
+	MyServer server;
+	
+	public Main(){
+		PdfViewer viewer = new PdfViewer();
+		viewer.insertPointer();
+		QRFrame qr = new QRFrame();
+		qr.init();
+		qr.setVisible(true);
+		viewer.onHighlight(400, 400);
+		Server server = new Server(null, viewer);
+		//MyServer server = new MyServer(viewer.allImages);
+		//server.start();
+	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		PdfViewer viewer = new PdfViewer();
+		new Main();
 	}
 
 }

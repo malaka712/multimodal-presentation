@@ -24,7 +24,7 @@ public class ConnectionService extends Service{
 	public final static String HIGHLIGHT = "highlight";
 	public final static String EXIT = "exit";
 	
-	public final static String IP = "ip";
+	public final static String IP = "localhost";
 	
 	private Socket socket;
 	private BufferedWriter writer;

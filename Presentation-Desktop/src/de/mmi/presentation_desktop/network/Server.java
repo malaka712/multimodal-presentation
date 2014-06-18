@@ -42,6 +42,7 @@ public class Server extends Thread{
 		try {
 			sSocket = new ServerSocket(PORT);
 			Socket socket = sSocket.accept();
+			System.out.println("accepted");
 			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			//reader = new JsonReader(new InputStreamReader(socket.getInputStream()));
 			//writer = new JsonWriter(new OutputStreamWriter(socket.getOutputStream()));

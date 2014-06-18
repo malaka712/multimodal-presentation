@@ -22,9 +22,10 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
 
+import de.mmi.presentation_desktop.handler.GUIHandler;
 import de.mmi.presentation_desktop.ui.DrawPanel;
 
-public class PdfViewer extends JFrame {
+public class PdfViewer extends JFrame implements GUIHandler {
 
 	List<PDPage> allPages = null;
 	List<ImageIcon> allImages = null;
@@ -38,6 +39,7 @@ public class PdfViewer extends JFrame {
 	JMenuItem fullscreen = new JMenuItem("Fullscreen");
 	JFrame var = this;
 	JLabel imageLabel;
+	DrawPanel pointer;
 
 	public PdfViewer() {
 		init();
@@ -82,6 +84,14 @@ public class PdfViewer extends JFrame {
 	/* Maybe go fullscreen only on menubar */
 	public void goFullScreen() {
 		System.out.println("Hello Fullscreen World!");
+	}
+	
+	public void insertPointer(){
+		pointer = new DrawPanel();
+		pointer.setOpaque(false);
+		this.add(pointer);
+		pointer.startAnimation();
+		
 	}
 
 	public void readPage() {
@@ -237,6 +247,20 @@ public class PdfViewer extends JFrame {
 		 * });
 		 */
 
+	}
+
+	@Override
+	public void onHighlight(float x, float y) {
+		// TODO Auto-generated method stub
+		pointer.setX((int) x);
+		pointer.setY((int) y);
+		pointer.repaint();
+	}
+
+	@Override
+	public void hideFrame() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
