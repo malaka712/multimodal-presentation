@@ -1,5 +1,12 @@
 # Multimodal Presentation
 
+## TODO
+
+ * Cleanup code (e.g. remove unused parts)
+ * Work in issues
+ * Remove Settings to enable api < 16
+ * include offset for highlighter (and pointer maybe) on Desktop side
+
 
 ## Write Description Stuff Here
 TODO: create initial Android Project and upload..
