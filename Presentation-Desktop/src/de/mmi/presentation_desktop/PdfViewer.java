@@ -1,5 +1,6 @@
 package de.mmi.presentation_desktop;
 
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -90,8 +91,9 @@ public class PdfViewer extends JFrame implements GUIHandler {
 	public void insertPointer() {
 		pointer = new DrawPanel();
 		pointer.setOpaque(false);
+		pointer.setBounds(0, 0, getToolkit().getScreenSize().width,
+				getToolkit().getScreenSize().height);
 		this.add(pointer);
-		pointer.startAnimation();
 	}
 
 	public void readPage() {
@@ -174,6 +176,7 @@ public class PdfViewer extends JFrame implements GUIHandler {
 			imageLabel = new JLabel(allImages.get(page));
 			imageLabel.setBounds(0, 0, var.getWidth(), var.getHeight());
 			imageLabel.repaint();
+			// pointer.add(imageLabel);
 			this.add(imageLabel);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -193,12 +196,14 @@ public class PdfViewer extends JFrame implements GUIHandler {
 		/* Set JFrame Fullscreen */
 		this.setBounds(0, 0, getToolkit().getScreenSize().width, getToolkit()
 				.getScreenSize().height);
+		
+		this.
+		
+		insertPointer();
 
 		// readPage();
 		readImage();
 
-		insertPointer();
-		
 		this.setUndecorated(true);
 		this.setExtendedState(this.MAXIMIZED_BOTH);
 		this.setVisible(true);
@@ -227,9 +232,10 @@ public class PdfViewer extends JFrame implements GUIHandler {
 					// previousPage();
 					previousImage();
 				}
-				if (arg0.getKeyCode() == (int) KeyEvent.VK_F1) {
+				if (arg0.getKeyCode() == (int) KeyEvent.VK_F1)
 					var.dispose();
-				}
+				if (arg0.getKeyCode() == (int) KeyEvent.VK_F2)
+					onHighlight(200, 200);
 				if (arg0.getKeyCode() == (int) KeyEvent.VK_ALT) {
 					if (menuBar.isVisible())
 						menuBar.setVisible(false);
@@ -256,7 +262,8 @@ public class PdfViewer extends JFrame implements GUIHandler {
 		// TODO Auto-generated method stub
 		pointer.setX((int) x);
 		pointer.setY((int) y);
-		pointer.repaint();
+		pointer.startAnimation();
+		// pointer.repaint();
 	}
 
 	@Override

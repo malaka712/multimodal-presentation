@@ -24,22 +24,20 @@ import de.mmi.presentation_desktop.ui.DrawPanel;
 import de.mmi.presentation_desktop.ui.QRFrame;
 
 public class Main {
-	
+
 	PdfViewer viewer;
 	QRFrame qr;
 	MyServer server;
-	
-	public Main(){
+
+	public Main() {
 		PdfViewer viewer = new PdfViewer();
 		QRFrame qr = new QRFrame();
 		qr.init();
 		qr.setVisible(true);
-		viewer.onHighlight(100, 100);
-		viewer.onHighlight(300, 300);
-		Server server = new Server(null, viewer);
-		server.start();
-		//MyServer server = new MyServer(viewer.allImages);
-		//server.start();
+		// Server server = new Server(null, viewer);
+		// server.start();
+		// MyServer server = new MyServer(viewer.allImages);
+		// server.start();
 	}
 
 	public static void main(String[] args) {
