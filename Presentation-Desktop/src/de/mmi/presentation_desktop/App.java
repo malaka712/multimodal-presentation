@@ -45,8 +45,8 @@ public class App extends Thread{
 				qFrame.init();
 				qFrame.setVisible(true);
 				
-				
-				HighlightFrame frame = new HighlightFrame();
+				// Merge-Conflict false hier richtig?
+				HighlightFrame frame = new HighlightFrame(false);
 				//frame.setVisible(true);
 				
 				KeyMapper mapper = null;
@@ -59,7 +59,7 @@ public class App extends Thread{
 				
 				//new Tester(mapper, frame).start();
 				
-				Server s = new Server(mapper, frame);
+				Server s = new Server(mapper, frame, null, null);
 				s.start();
 			}
 		});

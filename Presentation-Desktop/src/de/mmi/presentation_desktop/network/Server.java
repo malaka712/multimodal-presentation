@@ -12,8 +12,10 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
+import de.mmi.presentation_desktop.handler.Controller;
 import de.mmi.presentation_desktop.handler.GUIHandler;
 import de.mmi.presentation_desktop.handler.KeyHandler;
+import de.mmi.presentation_desktop.handler.PointerHandler;
 import de.mmi.presentation_desktop.utils.MessageTranslator;
 
 /**
@@ -27,21 +29,25 @@ public class Server extends Thread{
 	
 	KeyHandler mKeyHandler;
 	GUIHandler mGUIHandler;
+	PointerHandler mPointerHandler;
+	Controller controller;
 	
 	ServerSocket sSocket;
 	JsonReader reader;
 	BufferedReader br;
 	JsonWriter writer;
 	
-	public Server(KeyHandler keyHandler, GUIHandler guiHandler){
+	public Server(KeyHandler keyHandler, GUIHandler guiHandler, Controller controller, PointerHandler pointerHandler){
 		this.mKeyHandler = keyHandler;
 		this.mGUIHandler = guiHandler;
+		this.controller = controller;
+		this.mPointerHandler = pointerHandler;
 	}
 	
 	public void run(){
 		try {
 			sSocket = new ServerSocket(PORT);
-			System.out.println("before connection");
+			System.out.println("server started");
 			Socket socket = sSocket.accept();
 			System.out.println("accepted");
 			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -58,12 +64,15 @@ public class Server extends Thread{
 				JsonElement elem = parser.parse(str);
 				JsonObject obj = (JsonObject) elem;
 				
+				JsonElement jsonPointer = obj.get(MessageSet.POINT);
 				JsonElement jsonPos = obj.get(MessageSet.HIGHLIGHT);
 				JsonElement jsonKey = obj.get(MessageSet.KEY);
 				JsonElement jsonExit = obj.get(MessageSet.EXIT);
+				JsonElement jsonImageReq = obj.get(MessageSet.IMAGE_REQUEST);
 				
 
 				float[] position = null;
+				float[] pointerPos = null;
 				String key = null;
 				
 				if(jsonKey != null){
@@ -78,6 +87,12 @@ public class Server extends Thread{
 					}
 					
 					System.exit(0);
+				}else if (jsonImageReq != null){
+					controller.sendImages();
+				}else if (jsonPointer != null){
+					pointerPos = new float[2];
+					pointerPos[0] = (float)((JsonObject)jsonPointer).get(MessageSet.X_COORD).getAsDouble();
+					pointerPos[1] = (float)((JsonObject)jsonPointer).get(MessageSet.Y_COORD).getAsDouble();
 				}else{
 					System.out.println("null");
 				}
@@ -100,7 +115,7 @@ public class Server extends Thread{
 					final String finalKey = key;
 					new Thread(){
 						public void run(){
-							System.out.println("received key event " + finalKey);
+							//System.out.println("received key event " + finalKey);
 							mKeyHandler.onKeyPressed(MessageTranslator.translateToKeyCode(finalKey));
 							mGUIHandler.hideFrame();
 						}
@@ -109,12 +124,24 @@ public class Server extends Thread{
 					final float[] pos = position;
 					new Thread(){
 						public void run(){
-							System.out.println("received position [" + pos[0] + ", " + pos[1] + "]");
+							//System.out.println("received position [" + pos[0] + ", " + pos[1] + "]");
 							mGUIHandler.onHighlight(pos[0], pos[1]);
 						}
 					}.start();
+				
+				}else if(pointerPos != null){
+					final float[] pPos = pointerPos;
+					new Thread(){
+						public void run(){
+							
+							if(pPos[0] == pPos[1] && pPos[0] == MessageSet.HIDE_POINTER)
+								mPointerHandler.onHidePointer();
+							else
+								mPointerHandler.onPoint(pPos[0], pPos[1]);
+						}
+					}.start();
 				}else{
-					throw new IllegalStateException("Reader did not read anything!");
+					//throw new IllegalStateException("Reader did not read anything!");
 				}
 			}
 		} catch (IOException e) {

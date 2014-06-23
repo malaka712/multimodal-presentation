@@ -4,39 +4,35 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Panel;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.Ellipse2D;
 
 import javax.swing.JFrame;
 
-import de.mmi.presentation_desktop.handler.GUIHandler;
+import de.mmi.presentation_desktop.handler.PointerHandler;
 
-public class HighlightFrame extends JFrame implements GUIHandler{
+public class PointerFrame extends JFrame implements PointerHandler{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 7048766033817355530L;
 	
-	private final static int FRAME_WIDTH = 300;
+	private final static int FRAME_WIDTH = 15;
 
-	DrawPanel panel;
+	Panel panel;
 	
 	Dimension screenDimensions;
 	int screenWidth;
 	int screenHeight;
 	
-	public HighlightFrame(boolean transparency){
+	public PointerFrame(){
 		super("Presenter");
 		
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		panel = new DrawPanel();
-		// don't show background in panel
-		panel.setOpaque(false);
 		this.setSize(FRAME_WIDTH, FRAME_WIDTH);
-		
-		this.add(panel);
 		
 		this.addComponentListener(new ComponentAdapter() {
             // Give the window an elliptical shape.
@@ -51,13 +47,14 @@ public class HighlightFrame extends JFrame implements GUIHandler{
 		screenWidth = gd.getDisplayMode().getWidth();
 		screenHeight = gd.getDisplayMode().getHeight();
 		
-		// full screen
-		//this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+		panel = new Panel();
+		panel.setBackground(Color.green);
+		this.add(panel);
+		
 		// no surroundings
 		this.setUndecorated(true);
 		// make background invisible
-		if(transparency)
-			this.setBackground(new Color(0, 0, 0, 0));
+		this.setBackground(new Color(0, 255, 0));
 		// not focusable (so presentation-program receives key events)
 		this.setFocusableWindowState(false);
 	}
@@ -72,16 +69,17 @@ public class HighlightFrame extends JFrame implements GUIHandler{
 			repaint();
 		}
 	}
-
-	@Override
-	public void onHighlight(float x, float y) {
-		this.setBounds((int)(screenWidth*x) - FRAME_WIDTH/2, (int)(screenHeight*y) - FRAME_WIDTH/2, FRAME_WIDTH, FRAME_WIDTH);
-		panel.startAnimation();
-		this.setVisible(true);
-	}
 	
 	@Override
-	public void hideFrame(){
-		this.setVisible(false);
+	public void onPoint(float x, float y){
+		this.setBounds((int)(screenWidth*x) - FRAME_WIDTH/2, (int)(screenHeight*y) - FRAME_WIDTH/2, FRAME_WIDTH, FRAME_WIDTH);
+		setVisible(true);
 	}
+
+	@Override
+	public void onHidePointer() {
+		setVisible(false);
+	}
+
+	
 }

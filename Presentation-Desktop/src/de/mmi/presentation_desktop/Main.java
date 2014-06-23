@@ -1,16 +1,11 @@
 package de.mmi.presentation_desktop;
 
-import java.awt.Color;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.GraphicsDevice.WindowTranslucency;
 
 import javax.sql.rowset.serial.SerialArray;
-import javax.swing.JFrame;
+import de.mmi.presentation_desktop.handler.Controller;
 
 import org.apache.pdfbox.pdfviewer.PDFPagePanel;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -42,7 +37,34 @@ public class Main {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		new Main();
+		//new Main();
+		//PdfViewer viewer = new PdfViewer();
+		new Controller(transparencyEnabled());
 	}
+	
+	private static boolean transparencyEnabled(){
+		
+		boolean enabled = true;
+		
+		/*
+		 * Initial testing needed to ensure that we can run windows in transparent mode
+		 */
+		GraphicsEnvironment ge = 
+	            GraphicsEnvironment.getLocalGraphicsEnvironment();
+	    GraphicsDevice gd = ge.getDefaultScreenDevice();
 
+        //If translucent windows aren't supported, exit.
+        if (!gd.isWindowTranslucencySupported(WindowTranslucency.PERPIXEL_TRANSPARENT)) {
+            System.err.println(
+                "Per-Pixel-Transparency is not supported");
+                enabled = false;
+        }
+        
+        if (!gd.isWindowTranslucencySupported(WindowTranslucency.TRANSLUCENT)) {
+            System.err.println(
+                "Translucency is not supported");
+                enabled = false;
+        }
+        return enabled;
+	}
 }

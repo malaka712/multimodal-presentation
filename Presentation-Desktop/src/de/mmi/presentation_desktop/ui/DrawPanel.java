@@ -91,6 +91,9 @@ public class DrawPanel extends JPanel {
 		private final static int STEPS = 200;
 		private final static double END_VALUE = 1.0;
 		private final static double START_VALUE = 3.0;
+		private double stepSize;
+		private int step;
+
 
 		public void run() {
 			double stepSize = (START_VALUE - END_VALUE) / (float) STEPS;

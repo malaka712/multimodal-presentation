@@ -16,6 +16,8 @@ public interface MessageSet {
 	public final static String KEY = "key";
 	public final static String HIGHLIGHT = "highlight";
 	public final static String EXIT = "exit";
+	public final static String IMAGE_REQUEST = "send-images";
+	public final static String POINT = "point";
 	
 	/*
 	 * Values for key-type
@@ -23,6 +25,11 @@ public interface MessageSet {
 	public final static String NEXT = "next";
 	public final static String PREVIOUS = "previous";
 
+	/*
+	 * Values for Pointer pos
+	 */
+	
+	public final static float HIDE_POINTER = -2f;
 	
 	
 }
