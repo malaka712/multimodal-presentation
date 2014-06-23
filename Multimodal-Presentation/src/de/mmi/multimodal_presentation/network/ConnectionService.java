@@ -34,6 +34,7 @@ public class ConnectionService extends Service{
 	public final static String COMMAND = "command";
 	public final static String REQUEST_IMAGES = "get-imgs";
 	public final static String HIGHLIGHT = "highlight";
+	public final static String POINT = "point";
 	public final static String EXIT = "exit";
 	
 	public final static String IP = "ip";
@@ -75,6 +76,8 @@ public class ConnectionService extends Service{
 					exit();
 				}else if(action.equals(REQUEST_IMAGES)){
 					requestImages();
+				}else if(action.equals(POINT)){
+					
 				}
 			}
 		}
@@ -163,6 +166,10 @@ public class ConnectionService extends Service{
 				}
 			}
 		}.start();	
+	}
+	
+	private void sendPoint(final float x, final float y){
+		
 	}
 	
 	private void exit(){
