@@ -95,6 +95,7 @@ public class InitActivity extends Activity {
                 i.setAction(ConnectionService.CONNECT);
                 i.putExtra(ConnectionService.IP, contents);
                 startService(i);
+                
                 // Handle successful scan
             } else if (resultCode == RESULT_CANCELED) {
                 // Handle cancel

@@ -4,6 +4,7 @@ import java.io.File;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -151,7 +152,9 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 						currentSlideViews[currentSlideViewIndex].setImageBitmap(bmpBuffer[0]);
 						nextSlideView.setImageBitmap(bmpBuffer[1]);		
 						// start countdown.. needs to be made with real time as set in settings
-						countdown = new CountdownTask(10000L, timerTextView, PresentActivity.this);
+						SharedPreferences shPrefs = getSharedPreferences(ConnectionService.PREFS, 0);
+						int time = shPrefs.getInt(MessageSet.SECONDS, 0);
+						countdown = new CountdownTask((long)time, timerTextView, PresentActivity.this);
 						countdown.start();
 					}
 				});

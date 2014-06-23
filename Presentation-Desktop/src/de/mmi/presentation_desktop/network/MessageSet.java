@@ -18,6 +18,7 @@ public interface MessageSet {
 	public final static String EXIT = "exit";
 	public final static String IMAGE_REQUEST = "send-images";
 	public final static String POINT = "point";
+	public final static String SECONDS = "seconds";
 	
 	/*
 	 * Values for key-type

@@ -138,6 +138,7 @@ public class Controller implements GUIHandler, PointerHandler {
 				pdfViewer.setFile(pdfFile);
 				pdfViewer.init();
 				wf.setVisible(false);
+				showQRAndStartServer();
 			}
 		}.start();
 	}

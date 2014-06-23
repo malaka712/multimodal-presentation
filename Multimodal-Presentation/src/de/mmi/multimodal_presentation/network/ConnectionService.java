@@ -1,10 +1,12 @@
 package de.mmi.multimodal_presentation.network;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -12,12 +14,15 @@ import java.net.Socket;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import de.mmi.multimodal_presentation.utils.FileManager;
 
@@ -26,6 +31,7 @@ public class ConnectionService extends Service{
 	private final static int PORT = 62987;
 	private final static int BITSTREAM_PORT = 62986;
 	
+	public final static String PREFS = "prefs";
 	public final static String CONNECT = "connect";
 	public final static String COMMAND = "command";
 	public final static String REQUEST_IMAGES = "get-imgs";
@@ -41,6 +47,7 @@ public class ConnectionService extends Service{
 	private Socket socket;
 	private BufferedWriter writer;
 	
+	private MessageReaderThread messageReader;
 	private DataReadThread dataReader;
 	
 	private Handler mHandler;
@@ -76,7 +83,7 @@ public class ConnectionService extends Service{
 				}else if(action.equals(POINT)){
 					float x = intent.getFloatExtra("X", 0f);
 					float y = intent.getFloatExtra("Y", 0f);
-					sendHighlight(POINTER, x, y);
+					sendHighlight(POINT, x, y);
 				}
 			}
 		}
@@ -96,6 +103,8 @@ public class ConnectionService extends Service{
 					
 					socket = new Socket(InetAddress.getByName(ip.trim()), PORT);
 					writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+					messageReader = new MessageReaderThread( new BufferedReader(new InputStreamReader(socket.getInputStream())) );
+					messageReader.start();
 					
 					mHandler.post(new Runnable() {
 						
@@ -107,6 +116,9 @@ public class ConnectionService extends Service{
 					
 					serverIp = ip;
 					Log.i("Service", "connected to ip " + ip);
+					
+					// TODO: warning, currently automatically starting download of images when connected
+					requestImages();
 				}catch(IOException e){
 					e.printStackTrace();
 					mHandler.post(new Runnable() {
@@ -163,10 +175,6 @@ public class ConnectionService extends Service{
 				}
 			}
 		}.start();	
-	}
-	
-	private void sendPoint(final float x, final float y){
-		
 	}
 	
 	private void exit(){
@@ -250,7 +258,41 @@ public class ConnectionService extends Service{
 		}.start();	
 	}
 	
-	
+	private class MessageReaderThread extends Thread{
+		
+		BufferedReader reader;
+		
+		public MessageReaderThread(BufferedReader reader){
+			this.reader = reader;
+		}
+		
+		public void run(){
+			try{
+				while(!isInterrupted() && reader != null){
+					String str = reader.readLine();
+					if(reader == null)
+						this.interrupt();
+					
+					JsonParser parser = new JsonParser();
+					JsonElement elem = parser.parse(str);
+					JsonObject obj = (JsonObject) elem;
+					
+					JsonElement jsonTime = obj.get(MessageSet.SECONDS);
+					
+					if(jsonTime != null){
+						int time = jsonTime.getAsInt();
+						// store time in shared prefs.. 
+						SharedPreferences shPrefs = getApplicationContext().getSharedPreferences(PREFS, 0);
+						SharedPreferences.Editor editor = shPrefs.edit();
+						editor.putInt(MessageSet.SECONDS, time);
+						editor.commit();
+					}
+				}
+			}catch(IOException e){
+				// TODO: maybe handle.. 
+			}
+		}
+	}
 	
 	/**
 	 * This class creates a socket and connects to the server to receive images. It automatically interrupts itself if last image was received.
