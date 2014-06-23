@@ -15,6 +15,7 @@ import com.google.gson.stream.JsonWriter;
 import de.mmi.presentation_desktop.handler.Controller;
 import de.mmi.presentation_desktop.handler.GUIHandler;
 import de.mmi.presentation_desktop.handler.KeyHandler;
+import de.mmi.presentation_desktop.handler.PointerHandler;
 import de.mmi.presentation_desktop.utils.MessageTranslator;
 
 /**
@@ -28,6 +29,7 @@ public class Server extends Thread{
 	
 	KeyHandler mKeyHandler;
 	GUIHandler mGUIHandler;
+	PointerHandler mPointerHandler;
 	Controller controller;
 	
 	ServerSocket sSocket;
@@ -35,10 +37,11 @@ public class Server extends Thread{
 	BufferedReader br;
 	JsonWriter writer;
 	
-	public Server(KeyHandler keyHandler, GUIHandler guiHandler, Controller controller){
+	public Server(KeyHandler keyHandler, GUIHandler guiHandler, Controller controller, PointerHandler pointerHandler){
 		this.mKeyHandler = keyHandler;
 		this.mGUIHandler = guiHandler;
 		this.controller = controller;
+		this.mPointerHandler = pointerHandler;
 	}
 	
 	public void run(){
@@ -60,6 +63,7 @@ public class Server extends Thread{
 				JsonElement elem = parser.parse(str);
 				JsonObject obj = (JsonObject) elem;
 				
+				JsonElement jsonPointer = obj.get(MessageSet.POINT);
 				JsonElement jsonPos = obj.get(MessageSet.HIGHLIGHT);
 				JsonElement jsonKey = obj.get(MessageSet.KEY);
 				JsonElement jsonExit = obj.get(MessageSet.EXIT);
@@ -67,6 +71,7 @@ public class Server extends Thread{
 				
 
 				float[] position = null;
+				float[] pointerPos = null;
 				String key = null;
 				
 				if(jsonKey != null){
@@ -83,6 +88,10 @@ public class Server extends Thread{
 					System.exit(0);
 				}else if (jsonImageReq != null){
 					controller.sendImages();
+				}else if (jsonPointer != null){
+					pointerPos = new float[2];
+					pointerPos[0] = (float)((JsonObject)jsonPointer).get(MessageSet.X_COORD).getAsDouble();
+					pointerPos[1] = (float)((JsonObject)jsonPointer).get(MessageSet.Y_COORD).getAsDouble();
 				}else{
 					System.out.println("null");
 				}
@@ -116,6 +125,18 @@ public class Server extends Thread{
 						public void run(){
 							//System.out.println("received position [" + pos[0] + ", " + pos[1] + "]");
 							mGUIHandler.onHighlight(pos[0], pos[1]);
+						}
+					}.start();
+				
+				}else if(pointerPos != null){
+					final float[] pPos = pointerPos;
+					new Thread(){
+						public void run(){
+							
+							if(pPos[0] == pPos[1] && pPos[0] == MessageSet.HIDE_POINTER)
+								mPointerHandler.onHidePointer();
+							else
+								mPointerHandler.onPoint(pPos[0], pPos[1]);
 						}
 					}.start();
 				}else{

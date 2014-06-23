@@ -18,17 +18,22 @@ import de.mmi.presentation_desktop.network.Server;
 import de.mmi.presentation_desktop.ui.HighlightFrame;
 import de.mmi.presentation_desktop.ui.MainWindow;
 import de.mmi.presentation_desktop.ui.PdfViewer;
+import de.mmi.presentation_desktop.ui.PointerFrame;
 import de.mmi.presentation_desktop.ui.QRFrame;
 
-public class Controller implements GUIHandler {
+public class Controller implements GUIHandler, PointerHandler {
 	
 	
 	Server server;
 	PdfViewer pdfViewer;
 	HighlightFrame highlightFrame;
+	PointerFrame pointerFrame;
 	DataServer ds;
+	final boolean transparency;
 	
-	public Controller(){
+	
+	public Controller(boolean transparency){
+		this.transparency = transparency;
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			
@@ -56,7 +61,7 @@ public class Controller implements GUIHandler {
 
 		// if server is not null, we have done all this..
 		if(server == null){
-			server = new Server(pdfViewer, this, this);
+			server = new Server(pdfViewer, this, this, this);
 			server.start();
 			
 			ds = new DataServer();
@@ -67,7 +72,8 @@ public class Controller implements GUIHandler {
 	
 	public void startPresentation(){
 		pdfViewer.setVisible(true);
-		highlightFrame = new HighlightFrame();
+		highlightFrame = new HighlightFrame(transparency);
+		pointerFrame = new PointerFrame();
 	}
 
 	
@@ -146,5 +152,15 @@ public class Controller implements GUIHandler {
 	@Override
 	public void hideFrame() {
 		highlightFrame.hideFrame();
+	}
+
+	@Override
+	public void onPoint(float x, float y) {
+		pointerFrame.onPoint(x, y);
+	}
+	
+	@Override
+	public void onHidePointer() {
+		pointerFrame.onHidePointer();
 	}
 }

@@ -4,27 +4,38 @@
     android:layout_height="match_parent"
     tools:context="${packageName}.${activityClass}" 
     android:orientation="vertical"
-    android:id="@+id/main_layout">
+    android:id="@+id/main_layout"
+    android:background="#8b8585">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white">
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="#3c2726">
         
         <ImageView 
             android:id="@+id/current_slide_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="centerInside"
-            android:adjustViewBounds="true"/>
+            android:adjustViewBounds="true"
+            android:background="@android:color/white"/>
         <ImageView 
             android:id="@+id/current_slide_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="centerInside"
-            android:adjustViewBounds="true"/>
+            android:adjustViewBounds="true"
+            android:background="@android:color/white"/>
     </FrameLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="#771816"
+        />
+    
     
   	<LinearLayout
         android:id="@+id/bottom_layout"
@@ -35,20 +46,23 @@
         android:layout_marginBottom="10dp">
         
         <TextView 
-	        android:id="@+id/timer_text"
-	        android:layout_width="wrap_content"
+	        android:id="@+id/preview_slide_text"
+	        android:layout_width="100dp"
 	        android:layout_height="fill_parent"
-	        android:padding="30dp"
 	        android:gravity="center"
 	        android:textAppearance="@android:style/TextAppearance.Medium"
-	        android:textColor="@android:color/white"
-	        android:text="00:00"
-	        android:layout_gravity="center"/>
+	        android:textColor="#d4cece"
+	        android:textSize="22sp"
+	        android:textStyle="bold|italic"
+	        android:rotation="270"
+	        android:text="@string/next"
+	        android:singleLine="true"/>
         
         <FrameLayout 
 	       	android:id="@+id/preview_layout"
 	       	android:layout_width="wrap_content"
 	       	android:layout_height="wrap_content"
+	       	android:layout_marginRight="2dp"
 			android:background="@drawable/last_slide_background">
               
             <TextView 
@@ -70,14 +84,23 @@
 		        android:adjustViewBounds="true"
 		        />
 		</FrameLayout>
-            
+		
     </LinearLayout>
     
-    <EditText
-        android:id="@+id/notes"
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:text="Test\nTest2"/>
+  	<TextView 
+	        android:id="@+id/timer_text"
+	        android:layout_gravity="bottom"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="10dp"
+	        android:layout_marginRight="10dp"
+	        android:padding="10dp"
+	        android:gravity="center"
+	        android:background="#3c2726"
+	        android:textAppearance="@android:style/TextAppearance.Medium"
+	        android:textColor="#d4cece"
+	        android:textSize="30sp"
+	        android:text="00:00"/>
+    
     
 </LinearLayout>

@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="16"
+        android:minSdkVersion="15"
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -19,7 +19,10 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="de.mmi.multimodal_presentation.InitActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name" 
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" 
+            android:configChanges="orientation"
+    		android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,10 +35,6 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" 
             android:configChanges="orientation"
     		android:screenOrientation="portrait">
-        </activity>
-        <activity
-            android:name="de.mmi.multimodal_presentation.GyroActivity"
-            android:label="@string/title_activity_gyro" >
         </activity>
         
         <activity 

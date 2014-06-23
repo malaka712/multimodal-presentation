@@ -43,6 +43,7 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
     private ImageView nextSlideView;
     private TextView lastSlideTextView;
     private TextView timerTextView;
+    private TextView nextSlideHintText;
     
     // this value defines how many bitmaps are stored before the current bmp of main and after current bmp of preview
     // NOTE: If this value is 0, this will cause a crash when trying to move to next/previous slide, as we assume there is at least one image buffered.
@@ -82,6 +83,7 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
         nextSlideView = (ImageView) findViewById(R.id.preview_reader);
         lastSlideTextView = (TextView) findViewById(R.id.no_more_slide_text);
         timerTextView = (TextView) findViewById(R.id.timer_text);
+        nextSlideHintText = (TextView) findViewById(R.id.preview_slide_text);
        
         initAnimations();
         
@@ -148,6 +150,7 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 						// load first bitmap in main view and preview view
 						currentSlideViews[currentSlideViewIndex].setImageBitmap(bmpBuffer[0]);
 						nextSlideView.setImageBitmap(bmpBuffer[1]);		
+						// start countdown.. needs to be made with real time as set in settings
 						countdown = new CountdownTask(10000L, timerTextView, PresentActivity.this);
 						countdown.start();
 					}
@@ -257,8 +260,8 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 		Intent i = new Intent(getApplicationContext(), ConnectionService.class);
 		// Sagen, dass position gesendet werden soll
 		i.setAction(ConnectionService.HIGHLIGHT); // aber mit ConnectionService.POINT
-		
 		// position als relativen wert (zwischen 0 und 1) als float eingeben
+		// Wenn der pointer versteckt werden soll, hier ConnectionService.HIDE_POINTER für "X" UND "Y" übergeben
 		i.putExtra("X", x / (float)currentSlideViews[currentSlideViewIndex].getWidth());
 		i.putExtra("Y", y / (float)currentSlideViews[currentSlideViewIndex].getHeight());
 		

@@ -6,11 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.text.ParseException;
 import java.util.Arrays;
-import java.util.Date;
-
-import com.google.zxing.common.Comparator;
 
 public class DataServer extends Thread{
 	
