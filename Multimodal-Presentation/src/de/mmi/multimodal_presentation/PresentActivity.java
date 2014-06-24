@@ -154,7 +154,8 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 						// start countdown.. needs to be made with real time as set in settings
 						SharedPreferences shPrefs = getSharedPreferences(ConnectionService.PREFS, 0);
 						int time = shPrefs.getInt(MessageSet.SECONDS, 0);
-						countdown = new CountdownTask((long)time, timerTextView, PresentActivity.this);
+						// time is in seconds, convert to millis
+						countdown = new CountdownTask((long)time*1000L, timerTextView, PresentActivity.this);
 						countdown.start();
 					}
 				});
@@ -386,14 +387,7 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
 			public void onAnimationRepeat(Animation animation) {}
 			
 			@Override
-			public void onAnimationEnd(Animation animation) {
-				
-				if(countdown != null)
-					countdown.cancel();
-				
-				countdown = new CountdownTask(10000L, timerTextView, PresentActivity.this);
-				countdown.start();
-			}
+			public void onAnimationEnd(Animation animation) {}
 		});
 		
 		out.setAnimationListener(new AnimationListener() {

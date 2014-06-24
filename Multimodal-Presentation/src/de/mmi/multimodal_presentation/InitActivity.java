@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import de.mmi.multimodal_presentation.network.ConnectionService;
+import de.mmi.multimodal_presentation.network.MessageSet;
 import de.mmi.multimodal_presentation.settings.SettingsActivity;
 
 public class InitActivity extends Activity {
@@ -35,8 +36,14 @@ public class InitActivity extends Activity {
         presentButton.setOnClickListener(new View.OnClickListener() {	
 			@Override
 			public void onClick(View v) {
+				// start present-activity
 				Intent actInt = new Intent(getApplicationContext(), PresentActivity.class);
 				startActivity(actInt);
+				
+				// tell desktop to start presentation
+				Intent service = new Intent(getApplicationContext(), ConnectionService.class);
+				service.setAction(ConnectionService.START);
+				startService(service);
 			}
 		});
             

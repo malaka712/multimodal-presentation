@@ -1,8 +1,10 @@
 package de.mmi.presentation_desktop.network;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -12,7 +14,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
-import de.mmi.presentation_desktop.handler.Controller;
+import de.mmi.presentation_desktop.core.Controller;
 import de.mmi.presentation_desktop.handler.GUIHandler;
 import de.mmi.presentation_desktop.handler.KeyHandler;
 import de.mmi.presentation_desktop.handler.PointerHandler;
@@ -35,7 +37,7 @@ public class Server extends Thread{
 	ServerSocket sSocket;
 	JsonReader reader;
 	BufferedReader br;
-	JsonWriter writer;
+	BufferedWriter writer;
 	
 	public Server(KeyHandler keyHandler, GUIHandler guiHandler, Controller controller, PointerHandler pointerHandler){
 		this.mKeyHandler = keyHandler;
@@ -51,7 +53,7 @@ public class Server extends Thread{
 			Socket socket = sSocket.accept();
 			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			//reader = new JsonReader(new InputStreamReader(socket.getInputStream()));
-			//writer = new JsonWriter(new OutputStreamWriter(socket.getOutputStream()));
+			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			
 			while(!isInterrupted()){
 				//reader = new JsonReader(new InputStreamReader(socket.getInputStream()));
@@ -68,6 +70,7 @@ public class Server extends Thread{
 				JsonElement jsonKey = obj.get(MessageSet.KEY);
 				JsonElement jsonExit = obj.get(MessageSet.EXIT);
 				JsonElement jsonImageReq = obj.get(MessageSet.IMAGE_REQUEST);
+				JsonElement jsonStart = obj.get(MessageSet.START);
 				
 
 				float[] position = null;
@@ -87,11 +90,16 @@ public class Server extends Thread{
 					
 					System.exit(0);
 				}else if (jsonImageReq != null){
+					// App has requested images
 					controller.sendImages();
+					// as to change program-flow, also send time
+					controller.sendTimerData();
 				}else if (jsonPointer != null){
 					pointerPos = new float[2];
 					pointerPos[0] = (float)((JsonObject)jsonPointer).get(MessageSet.X_COORD).getAsDouble();
 					pointerPos[1] = (float)((JsonObject)jsonPointer).get(MessageSet.Y_COORD).getAsDouble();
+				}else if (jsonStart != null){
+					controller.startPresentation();
 				}else{
 					System.out.println("null");
 				}
@@ -152,6 +160,26 @@ public class Server extends Thread{
 				}catch(IOException e){}
 			}
 		}
+	}
+	
+	public void sendTimerMessage(final int time){
+		new Thread(){
+			public void run(){
+				if(writer != null){
+					JsonObject jsonObj = new JsonObject();
+					jsonObj.addProperty(MessageSet.SECONDS, time);
+					try{
+						System.out.println("Sending message: " + jsonObj.toString());
+						writer.write(jsonObj.toString() + "\n");
+						writer.flush();
+					}catch(IOException e){
+						e.printStackTrace();
+					}
+				}else{
+					System.err.println("Not connected.. can't send timer");
+				}
+			}
+		}.start();
 	}
 
 }

@@ -39,6 +39,7 @@ public class ConnectionService extends Service{
 	public final static String POINT = "point";
 	public final static float HIDE_POINTER = -2.0f;
 	public final static String EXIT = "exit";
+	public final static String START = "start";
 	
 	public final static String IP = "ip";
 	
@@ -57,6 +58,7 @@ public class ConnectionService extends Service{
 		return null;
 	}
 
+	// is called each time startService(...) is called
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		
@@ -84,6 +86,8 @@ public class ConnectionService extends Service{
 					float x = intent.getFloatExtra("X", 0f);
 					float y = intent.getFloatExtra("Y", 0f);
 					sendHighlight(POINT, x, y);
+				}else if(action.equals(START)){
+					sendStartPresentation();
 				}
 			}
 		}
@@ -92,7 +96,10 @@ public class ConnectionService extends Service{
 		return Service.START_STICKY;
 	}
 	
-	
+	/**
+	 * Established connection to the Desktop-Server with given ip. The port used is {@link ConnectionService#PORT}
+	 * @param ip The IP to connect to
+	 */
 	private void connectToIp(final String ip){
 		new Thread(){
 			public void run(){
@@ -134,49 +141,99 @@ public class ConnectionService extends Service{
 		
 	}
 	
+	/**
+	 * Sends a command to the server
+	 * @param command The command to send. Can be {@link MessageSet#NEXT NEXT} or {@link MessageSet#PREVIOUS PREVIOUS}
+	 */
 	private void sendCommand(final String command){
-		new Thread(){
-			public void run(){
-				if(socket != null && writer != null && socket.isConnected()){
-					
-					JsonObject jObj = new JsonObject();
-					jObj.addProperty(MessageSet.KEY, command);
-					try {
-						writer.write(jObj.toString() + "\n");
-						writer.flush();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					
-				}
-			}
-		}.start();	
+
+		JsonObject jObj = new JsonObject();
+		jObj.addProperty(MessageSet.KEY, command);
+		
+		sendMessage(jObj.toString());
 	}
 	
+	/**
+	 * Sends a message to the Server with given type and (relative position)
+	 * @param type The message-type ({@link ConnectionService#HIGHLIGHT} or {@link ConnectionService#POINT})
+	 * @param x
+	 * @param y
+	 */
 	private void sendHighlight(final String type, final float x, final float y){
+		JsonObject jObj = new JsonObject();
+		jObj.addProperty(MessageSet.X_COORD, (double)x);
+		jObj.addProperty(MessageSet.Y_COORD, (double)y);
+		
+		JsonObject posObj = new JsonObject();
+		posObj.add(type, jObj);
+		sendMessage(posObj.toString());
+	}
+	
+	/**
+	 * Starts a Server to retrieve Image-Data from Desktop-App and sends a request message that 
+	 * Desktop App starts sending the data. 
+	 * This is an extra connection and not uses the Socket used for JSON-Messages as 
+	 * we directy transfer the raw image data. 
+	 */
+	private void requestImages(){
+		Log.i("Service", "requesting images");
+		// first create an image-reader thread
+		if(dataReader != null && dataReader.isAlive()){
+			//throw new IllegalStateException("Can't start read-thread before last one finished");
+			dataReader.interrupt();
+		}else{
+			
+		}
+		
+		dataReader = new DataReadThread(getApplicationContext(), serverIp, mHandler);
+		dataReader.start();
+		
+		// now actually request images
+		JsonObject jObj = new JsonObject();
+		jObj.addProperty(MessageSet.IMAGE_REQUEST, MessageSet.IMAGE_REQUEST);
+		sendMessage(jObj.toString());
+	}
+	
+	/**
+	 * Sends command to Desktop App to start presentation
+	 */
+	private void sendStartPresentation(){
+		JsonObject jObj = new JsonObject();
+		jObj.addProperty(MessageSet.START, MessageSet.START);
+		sendMessage(jObj.toString());
+	}
+	
+	/**
+	 * Actually sends any message given as a String.
+	 * @param message The String-message to be send (JSONObject as a String). Do not attach a newline to the end of the String, this will be done automatically here.
+	 */
+	private void sendMessage(final String message){
 		new Thread(){
 			public void run(){
 				if(socket != null && writer != null && socket.isConnected()){
-					
-					JsonObject jObj = new JsonObject();
-					jObj.addProperty(MessageSet.X_COORD, (double)x);
-					jObj.addProperty(MessageSet.Y_COORD, (double)y);
-					
-					JsonObject posObj = new JsonObject();
-					posObj.add(type, jObj);
-					
 					try {
-						writer.write(posObj.toString() + "\n");
+						writer.write(message + "\n");
 						writer.flush();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					
+				}else{
+					mHandler.post(new Runnable() {					
+						@Override
+						public void run() {
+							Toast.makeText(getApplicationContext(), "No connection established, yet.",  Toast.LENGTH_SHORT).show();
+						}
+					});
 				}
 			}
-		}.start();	
+		}.start();
 	}
 	
+
+	/**
+	 * Sends a message to the Desktop-App to stop the Application and shuts down connection. 
+	 * After execution of this method, the Socket will be closed.
+	 */
 	private void exit(){
 			
 		new Thread(){
@@ -219,45 +276,11 @@ public class ConnectionService extends Service{
 		}.start();
 	}
 	
-	private void requestImages(){
-		new Thread(){
-			public void run(){
-				if(socket != null && writer != null && socket.isConnected()){
-					
-					Log.i("Service", "requesting images");
-					// first create an image-reader thread
-					if(dataReader != null && dataReader.isAlive()){
-						//throw new IllegalStateException("Can't start read-thread before last one finished");
-						dataReader.interrupt();
-					}else{
-						
-					}
-					
-					dataReader = new DataReadThread(getApplicationContext(), serverIp, mHandler);
-					dataReader.start();
-					
-					// now actually request images
-					JsonObject jObj = new JsonObject();
-					jObj.addProperty(MessageSet.IMAGE_REQUEST, MessageSet.IMAGE_REQUEST);
-					try {
-						writer.write(jObj.toString() + "\n");
-						writer.flush();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					
-				}else{
-					mHandler.post(new Runnable() {					
-						@Override
-						public void run() {
-							Toast.makeText(getApplicationContext(), "No connection established, yet.",  Toast.LENGTH_SHORT).show();
-						}
-					});
-				}
-			}
-		}.start();	
-	}
-	
+	/**
+	 * This class retrieves the Timer-Value set on Desktop App and saves it in SharedPreferences for further usage.
+	 * @author patrick
+	 *
+	 */
 	private class MessageReaderThread extends Thread{
 		
 		BufferedReader reader;
@@ -281,6 +304,7 @@ public class ConnectionService extends Service{
 					
 					if(jsonTime != null){
 						int time = jsonTime.getAsInt();
+						Log.i("ConnService", "received time: " + time);
 						// store time in shared prefs.. 
 						SharedPreferences shPrefs = getApplicationContext().getSharedPreferences(PREFS, 0);
 						SharedPreferences.Editor editor = shPrefs.edit();
@@ -288,7 +312,7 @@ public class ConnectionService extends Service{
 						editor.commit();
 					}
 				}
-			}catch(IOException e){
+			}catch(Exception e){
 				// TODO: maybe handle.. 
 			}
 		}

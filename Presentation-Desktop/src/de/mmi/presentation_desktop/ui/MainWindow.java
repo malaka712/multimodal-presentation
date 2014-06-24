@@ -11,7 +11,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import de.mmi.presentation_desktop.handler.Controller;
+import de.mmi.presentation_desktop.core.Controller;
 
 public class MainWindow extends JFrame{
 

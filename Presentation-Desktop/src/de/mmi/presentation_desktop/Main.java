@@ -4,12 +4,12 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GraphicsDevice.WindowTranslucency;
 
-import de.mmi.presentation_desktop.handler.Controller;
+import de.mmi.presentation_desktop.core.Controller;
 
 public class Main {
 
 	public static void main(String[] args) {
-		//PdfViewer viewer = new PdfViewer();
+		// start the Controller (core element that spawns windows)
 		new Controller(transparencyEnabled());
 	}
 	

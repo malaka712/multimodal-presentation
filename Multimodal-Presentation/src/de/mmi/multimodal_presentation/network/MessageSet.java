@@ -20,6 +20,7 @@ public interface MessageSet {
 	public final static String IMAGE_REQUEST = "send-images";
 	public final static String TIME = "time";
 	public final static String SECONDS = "seconds";
+	public final static String START = "start";
 	
 	/*
 	 * Values for key-type
