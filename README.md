@@ -4,7 +4,7 @@
 
  * Cleanup code (e.g. remove unused parts)
  * Work in issues
- * Remove Settings to enable api < 16
+ * [DONE] Remove Settings to enable api < 16
  * include offset for highlighter (and pointer maybe) on Desktop side
 
 
