@@ -36,6 +36,8 @@ public class QRFrame extends JFrame {
 	private JComboBox<String> interfaceChooser;
 	private DefaultComboBoxModel<String> interfaceModel;
 	
+	private final boolean loopbackValid;
+	
 	private List<NetworkInterface> netList;
 	private JTextPane ipInfoLabel;
 	private ImagePanel qrPanel;
@@ -44,10 +46,21 @@ public class QRFrame extends JFrame {
 	private final static int QR_CODE_SIZE = 500;
 	
 	/**
-	 * Create the frame.
+	 * Creates a frame displaying the IPv4-Addresses of the available interfaces in a QR-Code
+	 * By default, loopback is not seen as valid IP-Address. See {@link #QRFrame(boolean)} if loopback should be included.
 	 */
 	public QRFrame() {
+		this(false);
+	}
+	
+	/**
+	 * Creates a frame displaying the IPv4-Addresses of the available interfaces in a QR-Code
+	 * @param loopbackValid If false, the loopback address (127.0.0.1) will not be displayed as a valid ipv4-address.
+	 */
+	public QRFrame(boolean loopbackValid){
 		super("Choose IP");
+		
+		this.loopbackValid = loopbackValid;
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -74,6 +87,7 @@ public class QRFrame extends JFrame {
 		ipInfoLabel = new JTextPane();
 		contentPane.add(ipInfoLabel, BorderLayout.SOUTH);
 	}
+	
 	
 	public void init(){		
 		try {
@@ -140,7 +154,7 @@ public class QRFrame extends JFrame {
 		Enumeration<InetAddress> inetAddresses = netInt.getInetAddresses();
         for (InetAddress inetAddress : Collections.list(inetAddresses)) {
         	m = IP_PATTERN.matcher(inetAddress.toString());
-        	if(m.matches()){
+        	if(m.matches() && (loopbackValid || !inetAddress.toString().contains("127.0.0.1"))){
         		//System.out.println("found match with " + inetAddress.toString().substring(1));
         		return inetAddress.toString().substring(1);
         	}

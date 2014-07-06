@@ -1,7 +1,6 @@
 package de.mmi.presentation_desktop.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -27,8 +26,6 @@ public class TimeFrame extends JFrame{
 	private static final long serialVersionUID = 1679344057192787994L;
 	
 	private TimerListener listener;
-	
-	private Color transparent = new Color(0f,0f,0f,0f);
 	
 	private JPanel timePanel;
 	private JPanel buttonPanel;
@@ -78,7 +75,6 @@ public class TimeFrame extends JFrame{
 		GridLayout timeLayout = new GridLayout(3, 4);
 		timeLayout.setHgap(10);
 		timeLayout.setVgap(5);
-		//timePanel.setBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, Color.green));
 		timePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		timePanel.setLayout(timeLayout);
 		
@@ -86,7 +82,6 @@ public class TimeFrame extends JFrame{
 		buttonPanel.setPreferredSize(new Dimension(2*d.width+10, d.height+20));		
 		BorderLayout buttonLayout = new BorderLayout(5, 0);
 		buttonPanel.setLayout(buttonLayout);
-		//buttonPanel.setBorder(BorderFactory.createMatteBorder(10, 60, 10, 10, Color.red));
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 100, 10, 10));
 
 		BorderLayout mainLayout = new BorderLayout();
@@ -104,7 +99,6 @@ public class TimeFrame extends JFrame{
 		JButton increaseMinutes = new JButton();
 		increaseMinutes.setIcon(upIcon);
 		increaseMinutes.setToolTipText("Increase minutes");
-		increaseMinutes.setBackground(transparent);
 		timePanel.add(increaseMinutes);
 		
 		// Buffer label
@@ -113,7 +107,6 @@ public class TimeFrame extends JFrame{
 		JButton increaseSeconds = new JButton();
 		increaseSeconds.setIcon(upIcon);
 		increaseSeconds.setToolTipText("Increase seconds");
-		increaseSeconds.setBackground(transparent);
 		timePanel.add(increaseSeconds);
 		
 		
@@ -143,7 +136,6 @@ public class TimeFrame extends JFrame{
 		JButton decreaseMinutes = new JButton();
 		decreaseMinutes.setIcon(downIcon);
 		decreaseMinutes.setToolTipText("Decrease minutes");
-		decreaseMinutes.setBackground(transparent);
 		timePanel.add(decreaseMinutes);
 		
 		timePanel.add(new JLabel());
@@ -151,7 +143,6 @@ public class TimeFrame extends JFrame{
 		JButton decreaseSeconds = new JButton();
 		decreaseSeconds.setIcon(downIcon);
 		decreaseSeconds.setToolTipText("Decrease seconds");
-		decreaseSeconds.setBackground(transparent);
 		timePanel.add(decreaseSeconds);
 		
 		timePanel.add(new JLabel());
@@ -192,7 +183,6 @@ public class TimeFrame extends JFrame{
 	 */
 	
 	private void increase(JButton button, JTextField field){
-		button.setBackground(transparent);
 		button.setSelected(false);
 		
 		int number;
@@ -207,7 +197,6 @@ public class TimeFrame extends JFrame{
 	}
 	
 	private void decrease(JButton button, JTextField field){
-		button.setBackground(transparent);
 		button.setSelected(false);
 		
 		int number = -1;
@@ -283,12 +272,19 @@ public class TimeFrame extends JFrame{
 		}
 	};
 	
-	/*
-	 * The listener for the callback
-	 */
 	
+	/**
+	 * The listener for the callback from TimeFrame
+	 */
 	public interface TimerListener{
+		/**
+		 * Is called when the time was set and time-frame closed.
+		 * @param seconds The set time in seconds
+		 */
 		public void onTimeSet(int seconds);
+		/**
+		 * Is called when time-frame is closed via cancel-button.
+		 */
 		public void onCancel();
 	}
 }

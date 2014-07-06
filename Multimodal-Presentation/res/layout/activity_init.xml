@@ -19,13 +19,13 @@
         android:textSize="20sp"
         android:textColor="@android:color/black"/>
     
-    <Button
+    <!-- Button
         android:id="@+id/settings_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/title"
 		android:layout_alignRight="@+id/instructions_img"
-		android:background="@drawable/ic_action_settings"/>
+		android:background="@drawable/ic_action_settings"/-->
     
         
     <Button
@@ -43,7 +43,7 @@
         android:textStyle="bold"/>
     
     <!-- remove/hide for real version -->
-    <Button
+    <!-- Button
         android:id="@+id/load_presentation" 
         android:layout_width="wrap_content"
         android:padding="10dp"
@@ -52,10 +52,10 @@
         android:background="@drawable/button_background"
         android:layout_alignBottom="@+id/scan_ip"
         android:layout_toRightOf="@+id/scan_ip"
-        android:text="@string/load_presentation"/>
+        android:text="@string/load_presentation"/ -->
     
     <!-- remove/hide for real version.. or keep? Closing connection would be good.. -->
-    <Button 
+    <!-- Button 
         android:id="@+id/exit"	
         android:layout_width="wrap_content"
         android:padding="10dp"
@@ -64,7 +64,7 @@
         android:background="@drawable/button_background"
         android:layout_alignBottom="@+id/scan_ip"
         android:layout_toLeftOf="@+id/scan_ip"
-        android:text="@string/exit"/>
+        android:text="@string/exit"/-->
     
     <ImageView 
         android:id="@+id/instructions_img"

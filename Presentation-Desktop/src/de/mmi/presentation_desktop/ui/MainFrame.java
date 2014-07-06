@@ -40,7 +40,7 @@ public class MainFrame extends JFrame{
 	
 	private final static String[] toolTips = new String[]{
 			"Open Window to choose PDF-Presentation",
-			"Set time for Presentation in the opened Window",
+			"Set time for Presentation",
 			"Use Smartphone to scan given QR-Code",
 			"Start presentation using your Smartphone"
 		};
@@ -159,11 +159,12 @@ public class MainFrame extends JFrame{
 		
 		buttonPanel.add(actionButton);
 		actionButton.setBounds(buttonBounds[boundIndex]);
-		
+		//layer.add(actionButton);
 		this.add(layer);
 	}
 	
 	private void updateButtonBounds(){
+		this.repaint();
 		actionButton.setToolTipText(toolTips[boundIndex]);
 		actionButton.setBounds(buttonBounds[boundIndex]);
 		actionButton.repaint();
@@ -171,10 +172,14 @@ public class MainFrame extends JFrame{
 	}
 
 	public void next(){
+		
 		boundIndex = (boundIndex+1)%buttonBounds.length;
-		if(boundIndex >= (buttonBounds.length/2))
-			actionButton.setEnabled(false);
+		/*if(boundIndex >= (buttonBounds.length/2))
+			enabled = false;*/
 		updateButtonBounds();
+		
+		//actionButton.setEnabled(enabled);
+		
 		actionButton.setVisible(true);
 	}
 	
@@ -188,8 +193,8 @@ public class MainFrame extends JFrame{
 	
 	@Override
 	public void setVisible(boolean b) {
-		if(b)
-			buttonPanel.repaint();
+		//if(b)
+			//buttonPanel.repaint();
 		
 		super.setVisible(b);
 	}

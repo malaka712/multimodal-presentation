@@ -1,5 +1,6 @@
 package de.mmi.presentation_desktop.ui;
 
+import java.awt.Frame;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -23,12 +24,16 @@ import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
 
 import de.mmi.presentation_desktop.core.Controller;
-import de.mmi.presentation_desktop.handler.GUIHandler;
 import de.mmi.presentation_desktop.handler.KeyHandler;
 
 
 public class PdfViewer extends JFrame implements KeyHandler{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 158446516198919582L;
+	
 	List<PDPage> allPages = null;
 	ArrayList<ImageIcon> allImages = null;
 	PDFPagePanel pdfPanel;
@@ -92,6 +97,7 @@ public class PdfViewer extends JFrame implements KeyHandler{
 		System.out.println("Hello Fullscreen World!");
 	}
 
+	@SuppressWarnings("unchecked")
 	public void readPage() {
 		/*
 		 * Open File TODO: FileChoser
@@ -160,6 +166,7 @@ public class PdfViewer extends JFrame implements KeyHandler{
 		//readImage();
 	}
 
+	@SuppressWarnings("unchecked")
 	public void readImage() {
 		File PDF_Path;
 		if(pdfFile == null)
@@ -213,7 +220,7 @@ public class PdfViewer extends JFrame implements KeyHandler{
 		readImage();
 
 		this.setUndecorated(true);
-		this.setExtendedState(this.MAXIMIZED_BOTH);
+		this.setExtendedState(Frame.MAXIMIZED_BOTH);
 		//this.setVisible(true);
 		this.addKeyListener(new KeyListener() {
 
@@ -279,6 +286,7 @@ public class PdfViewer extends JFrame implements KeyHandler{
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<ImageIcon> getImages(){
 		ArrayList<ImageIcon> cloned = (ArrayList<ImageIcon>) allImages.clone();
 		return cloned;

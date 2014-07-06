@@ -1,13 +1,10 @@
 package de.mmi.multimodal_presentation.settings;
 
-import de.mmi.multimodal_presentation.utils.FileManager;
 import android.app.Activity;
-import android.app.Service;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.widget.Toast;
+import de.mmi.multimodal_presentation.utils.FileManager;
 
 public class CacheClearActivity extends Activity{
 

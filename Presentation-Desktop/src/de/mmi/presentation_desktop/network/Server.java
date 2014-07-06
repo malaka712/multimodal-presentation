@@ -12,7 +12,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 
 import de.mmi.presentation_desktop.core.Controller;
 import de.mmi.presentation_desktop.handler.GUIHandler;

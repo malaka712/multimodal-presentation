@@ -1,18 +1,17 @@
 package de.mmi.multimodal_presentation;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import de.mmi.multimodal_presentation.network.ConnectionService;
-import de.mmi.multimodal_presentation.network.MessageSet;
-import de.mmi.multimodal_presentation.settings.SettingsActivity;
+import de.mmi.multimodal_presentation.settings.CacheClearActivity;
 
 public class InitActivity extends Activity {
 
@@ -26,9 +25,6 @@ public class InitActivity extends Activity {
          */
         Button presentButton = (Button) findViewById(R.id.start_present_activity);
         Button scanButton = (Button) findViewById(R.id.scan_ip);
-        Button exitButton = (Button) findViewById(R.id.exit);
-        Button downloadButton = (Button) findViewById(R.id.load_presentation);
-        Button settingsButton = (Button) findViewById(R.id.settings_button);
         
         /*
          * Add onclicklisteners to start corresponding activity 
@@ -59,35 +55,6 @@ public class InitActivity extends Activity {
 				}.start();	
 			}
 		});
-        
-        exitButton.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(getApplicationContext(), ConnectionService.class);
-				intent.setAction(ConnectionService.EXIT);
-				startService(intent);
-			}
-		});
-        
-        downloadButton.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(getApplicationContext(), ConnectionService.class);
-				intent.setAction(ConnectionService.REQUEST_IMAGES);
-				startService(intent);
-			}
-		});
-        
-        settingsButton.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				openSettings();
-			}
-		});
-        //startService()
     }
     
     @Override
@@ -111,31 +78,49 @@ public class InitActivity extends Activity {
         }
     }
 
-    
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// add menu to enable settings
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.init_activity_actions, menu);
-		return super.onCreateOptionsMenu(menu);
-	}
-	
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle presses on the action bar items
-	    switch (item.getItemId()) {
-	        case R.id.action_settings:
-	            openSettings();
-	            return true;
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
-	}
-    
+    /*
 	private void openSettings(){
 		Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
 		startActivity(settingsIntent);
-	}
+	}*/
     
+    @Override
+    public void onBackPressed(){
+        // catch this event to clear cache.. 
+    	
+    	AlertDialog dialog = new AlertDialog.Builder(this)
+    		.setMessage("Should the current presentation be removed and connection closed?")
+    		.setTitle("Done?")
+    		.setPositiveButton("Yes, done!",  new OnClickListener() {			
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// clear cache
+					Intent i = new Intent(InitActivity.this, CacheClearActivity.class);
+					startActivity(i);
+					
+					// exit connection(, close desktop side )
+					Intent intent = new Intent(getApplicationContext(), ConnectionService.class);
+					intent.setAction(ConnectionService.EXIT);
+					startService(intent);
+					back();
+				}
+			})
+			.setNegativeButton("No, keep", new OnClickListener() {	
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					back();
+				}
+			}).setNeutralButton("Cancel", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+										
+				}
+			}).create();
+    	
+    	dialog.show();
+    }
+    
+    private void back(){
+    	super.onBackPressed();
+    }
 }

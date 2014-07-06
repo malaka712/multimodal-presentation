@@ -20,7 +20,6 @@ import de.mmi.presentation_desktop.network.DataServer;
 import de.mmi.presentation_desktop.network.Server;
 import de.mmi.presentation_desktop.ui.HighlightFrame;
 import de.mmi.presentation_desktop.ui.MainFrame;
-import de.mmi.presentation_desktop.ui.MainWindow;
 import de.mmi.presentation_desktop.ui.PdfViewer;
 import de.mmi.presentation_desktop.ui.PointerFrame;
 import de.mmi.presentation_desktop.ui.QRFrame;
@@ -74,7 +73,7 @@ public class Controller implements GUIHandler, PointerHandler, TimerListener {
 			
 			@Override
 			public void run() {
-				qFrame = new QRFrame();
+				qFrame = new QRFrame(false);
 				qFrame.init();
 				qFrame.setVisible(true);
 			}

@@ -44,7 +44,7 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
     private ImageView nextSlideView;
     private TextView lastSlideTextView;
     private TextView timerTextView;
-    private TextView nextSlideHintText;
+    //private TextView nextSlideHintText;
     
     // this value defines how many bitmaps are stored before the current bmp of main and after current bmp of preview
     // NOTE: If this value is 0, this will cause a crash when trying to move to next/previous slide, as we assume there is at least one image buffered.
@@ -84,7 +84,7 @@ public class PresentActivity extends Activity implements GestureDetector.OnGestu
         nextSlideView = (ImageView) findViewById(R.id.preview_reader);
         lastSlideTextView = (TextView) findViewById(R.id.no_more_slide_text);
         timerTextView = (TextView) findViewById(R.id.timer_text);
-        nextSlideHintText = (TextView) findViewById(R.id.preview_slide_text);
+        //nextSlideHintText = (TextView) findViewById(R.id.preview_slide_text);
        
         initAnimations();
         

@@ -10,12 +10,12 @@ import android.widget.TextView;
 public class CountdownTask extends CountDownTimer{
 
 	
-	private final static long[] HALF_TIME_PATTERN = new long[]{
+	/*private final static long[] HALF_TIME_PATTERN = new long[]{
 		0L,
 		100L,
 		500L,
 		100L
-	};
+	};*/
 	
 	private final static long[] FULL_TIME_PATTERN = new long[]{
 		0L,
