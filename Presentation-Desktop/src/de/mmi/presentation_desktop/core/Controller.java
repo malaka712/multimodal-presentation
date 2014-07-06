@@ -10,20 +10,25 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import de.mmi.presentation_desktop.handler.GUIHandler;
 import de.mmi.presentation_desktop.handler.PointerHandler;
 import de.mmi.presentation_desktop.network.DataServer;
 import de.mmi.presentation_desktop.network.Server;
 import de.mmi.presentation_desktop.ui.HighlightFrame;
+import de.mmi.presentation_desktop.ui.MainFrame;
 import de.mmi.presentation_desktop.ui.MainWindow;
 import de.mmi.presentation_desktop.ui.PdfViewer;
 import de.mmi.presentation_desktop.ui.PointerFrame;
 import de.mmi.presentation_desktop.ui.QRFrame;
+import de.mmi.presentation_desktop.ui.TimeFrame;
+import de.mmi.presentation_desktop.ui.TimeFrame.TimerListener;
 import de.mmi.presentation_desktop.ui.WaitFrame;
 
-public class Controller implements GUIHandler, PointerHandler {
+public class Controller implements GUIHandler, PointerHandler, TimerListener {
 	
 	
 	Server server;
@@ -32,7 +37,10 @@ public class Controller implements GUIHandler, PointerHandler {
 	PointerFrame pointerFrame;
 	DataServer ds;
 	final boolean transparency;
+	MainFrame mainWindow;
 	
+	private QRFrame qFrame;
+	private int time = 0;
 	
 	public Controller(boolean transparency){
 		this.transparency = transparency;
@@ -43,9 +51,15 @@ public class Controller implements GUIHandler, PointerHandler {
 			@Override
 			public void run() {
 				pdfViewer = new PdfViewer(Controller.this);
+				
+				mainWindow = new MainFrame(Controller.this);
+				mainWindow.pack();
+				mainWindow.setLocationRelativeTo(null);
+				mainWindow.setVisible(true);
+				/*
 				MainWindow win = new MainWindow(Controller.this);
 				win.pack();
-				win.setVisible(true);
+				win.setVisible(true);*/
 			}
 		});
 	}
@@ -60,7 +74,7 @@ public class Controller implements GUIHandler, PointerHandler {
 			
 			@Override
 			public void run() {
-				QRFrame qFrame = new QRFrame();
+				qFrame = new QRFrame();
 				qFrame.init();
 				qFrame.setVisible(true);
 			}
@@ -75,6 +89,17 @@ public class Controller implements GUIHandler, PointerHandler {
 			// DataServer sending images
 			ds = new DataServer();
 			ds.start();
+			new Thread(){
+				public void run(){
+					try {
+						ds.join();
+						mainWindow.next();
+						qFrame.dispose();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}.start();
 			
 		}
 	}
@@ -101,7 +126,7 @@ public class Controller implements GUIHandler, PointerHandler {
 	public void sendTimerData() {
 		// TODO: get real data (from not yet existing timer window)
 		
-		server.sendTimerMessage(600);
+		server.sendTimerMessage(time);
 		
 	}
 	
@@ -166,8 +191,9 @@ public class Controller implements GUIHandler, PointerHandler {
 				pdfViewer.setFile(pdfFile);
 				pdfViewer.init();
 				wf.setVisible(false);
+				mainWindow.next();
 				// TODO: don't show QR-Frame, but Time-Frame instead to set time for presentation
-				showQRAndStartServer();
+				//showQRAndStartServer();
 			}
 		}.start();
 	}
@@ -205,4 +231,38 @@ public class Controller implements GUIHandler, PointerHandler {
 		pointerFrame.onHidePointer();
 	}
 
+	public void choosePresentation() {
+		JFileChooser chooser = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("PDFs", "pdf", "PDF");
+		chooser.setFileFilter(filter);
+		int retVal = chooser.showOpenDialog(mainWindow);
+		if(retVal == JFileChooser.APPROVE_OPTION) {
+	       System.out.println("You chose to open this file: " +
+	            chooser.getSelectedFile().getName());
+	    }
+		
+		File selection = chooser.getSelectedFile();
+		
+		newPDF(selection);
+		
+	}
+
+	public void setTime() {
+		TimeFrame tFrame = new TimeFrame(this, mainWindow);
+		tFrame.pack();
+		tFrame.setVisible(true);
+	}
+
+	@Override
+	public void onTimeSet(int seconds) {
+		this.time = seconds;		
+		System.out.println("time set to " + seconds + " seconds");
+		mainWindow.next();
+		showQRAndStartServer();
+	}
+
+	@Override
+	public void onCancel(){
+		mainWindow.redo();
+	}
 }

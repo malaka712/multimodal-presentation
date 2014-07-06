@@ -15,6 +15,11 @@ import de.mmi.presentation_desktop.core.Controller;
 
 public class MainWindow extends JFrame{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -260046765580656015L;
+	
 	Controller controller;
 	
 	public MainWindow(Controller controller){

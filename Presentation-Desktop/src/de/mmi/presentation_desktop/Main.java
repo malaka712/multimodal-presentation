@@ -3,14 +3,18 @@ package de.mmi.presentation_desktop;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GraphicsDevice.WindowTranslucency;
+import java.io.IOException;
 
 import de.mmi.presentation_desktop.core.Controller;
+import de.mmi.presentation_desktop.ui.MainFrame;
 
 public class Main {
 
 	public static void main(String[] args) {
 		// start the Controller (core element that spawns windows)
 		new Controller(transparencyEnabled());
+
+			//tst.repaint();
 	}
 	
 	private static boolean transparencyEnabled(){
