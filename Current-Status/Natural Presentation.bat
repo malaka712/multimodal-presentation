@@ -1,2 +1,2 @@
 cd lib
-java -jar Presenter.jar
+java -Xms1500m -Xmx1500m -jar Presenter.jar
