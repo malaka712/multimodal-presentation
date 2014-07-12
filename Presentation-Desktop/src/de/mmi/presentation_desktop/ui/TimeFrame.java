@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,7 +47,7 @@ public class TimeFrame extends JFrame{
 		Container pane = this.getContentPane();
 		
 		// fixed size
-		this.setResizable(false);
+		//this.setResizable(false);
 		
 		
 		/*
@@ -80,9 +81,10 @@ public class TimeFrame extends JFrame{
 		
 		buttonPanel = new JPanel();
 		buttonPanel.setPreferredSize(new Dimension(2*d.width+10, d.height+20));		
-		BorderLayout buttonLayout = new BorderLayout(5, 0);
+		//BorderLayout buttonLayout = new BorderLayout(5, 0);
+		FlowLayout buttonLayout = new FlowLayout(FlowLayout.RIGHT, 10, 0);
 		buttonPanel.setLayout(buttonLayout);
-		buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 100, 10, 10));
+		buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 0));
 
 		BorderLayout mainLayout = new BorderLayout();
 		pane.setLayout(mainLayout);
@@ -153,11 +155,13 @@ public class TimeFrame extends JFrame{
 		 */		
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.setToolTipText("Close window without saving");
-		buttonPanel.add(cancelButton, BorderLayout.WEST);
+		buttonPanel.add(cancelButton/*, BorderLayout.WEST*/);
 		
 		JButton applyButton = new JButton("Ok");
+		// both buttons have same size
+		applyButton.setPreferredSize(cancelButton.getPreferredSize());
 		applyButton.setToolTipText("Save time and close window");
-		buttonPanel.add(applyButton, BorderLayout.EAST);
+		buttonPanel.add(applyButton/*, BorderLayout.EAST*/);
 		
 		
 		/*

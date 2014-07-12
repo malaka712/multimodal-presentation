@@ -236,14 +236,14 @@ public class Controller implements GUIHandler, PointerHandler, TimerListener {
 		chooser.setFileFilter(filter);
 		int retVal = chooser.showOpenDialog(mainWindow);
 		if(retVal == JFileChooser.APPROVE_OPTION) {
-	       System.out.println("You chose to open this file: " +
-	            chooser.getSelectedFile().getName());
+			// selection was confirmed with "OK", decode file
+			newPDF(chooser.getSelectedFile());
+
+		}else if(retVal == JFileChooser.CANCEL_OPTION){
+	    	// selection was canceled, set button visible again
+			mainWindow.redo();
 	    }
-		
-		File selection = chooser.getSelectedFile();
-		
-		newPDF(selection);
-		
+
 	}
 
 	public void setTime() {
