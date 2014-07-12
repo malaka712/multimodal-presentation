@@ -90,7 +90,7 @@
         android:text="@string/present"
         android:textStyle="bold"
         android:textSize="28sp"
-        android:enabled="true" 
+        android:enabled="false" 
         android:layout_below="@+id/instructions_img"/>
     
     <TextView

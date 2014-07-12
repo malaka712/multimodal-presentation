@@ -32,16 +32,32 @@ public class QRFrame extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -9153059369012127544L;
+	
+	/**
+	 * Main Panel. Is used with {@link java.awt.BorderLayout BorderLayout}
+	 */
 	private JPanel contentPane;
 	private JComboBox<String> interfaceChooser;
 	private DefaultComboBoxModel<String> interfaceModel;
 	
+	/**
+	 * If true, {@link #LOOPBACK} will be considered a valid IPv4 address.
+	 */
 	private final boolean loopbackValid;
 	
 	private List<NetworkInterface> netList;
 	private JTextPane ipInfoLabel;
 	private ImagePanel qrPanel;
+
+	private static final String NOT_VALID = "No valid ip found";
+	/**
+	 * The Loopback address: 127.0.0.1
+	 */
+	public static final String LOOPBACK = "127.0.0.1";
 	
+	/**
+	 * If an IP matches this pattern, it is considered as valid (except for loopback-address)
+	 */
 	private final static Pattern IP_PATTERN = Pattern.compile("/(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})$");
 	private final static int QR_CODE_SIZE = 500;
 	
@@ -55,7 +71,7 @@ public class QRFrame extends JFrame {
 	
 	/**
 	 * Creates a frame displaying the IPv4-Addresses of the available interfaces in a QR-Code
-	 * @param loopbackValid If false, the loopback address (127.0.0.1) will not be displayed as a valid ipv4-address.
+	 * @param loopbackValid If false, the loopback address {@link #LOOPBACK} will not be displayed as a valid ipv4-address.
 	 */
 	public QRFrame(boolean loopbackValid){
 		super("Choose IP");
@@ -88,13 +104,16 @@ public class QRFrame extends JFrame {
 		contentPane.add(ipInfoLabel, BorderLayout.SOUTH);
 	}
 	
-	
+	/**
+	 * This method prepares the frame. It reads all valid interfaces and puts them in a list for user to choose to which one to use.
+	 */
 	public void init(){		
 		try {
 			netList = Collections.list(NetworkInterface.getNetworkInterfaces());
 			
 			for(NetworkInterface ni : netList){
-				interfaceModel.addElement(ni.getName() + " - " + getIpv4Address(ni));
+				if(isInterfaceValid(ni))
+					interfaceModel.addElement(ni.getName() + " - " + getIpv4Address(ni));
 			}
 			this.repaint();
 			
@@ -107,6 +126,11 @@ public class QRFrame extends JFrame {
 		}
 	}
 	
+	/**
+	 * Creates a new QR-Code-Image for the given item.
+	 * And updates the text with detailed info.
+	 * @param item The Item chosen (from JComboBox)
+	 */
 	private void choiceChanged(String item){
 		item = item.split("-")[0].trim();
 		NetworkInterface ni = null;
@@ -135,6 +159,20 @@ public class QRFrame extends JFrame {
 		}
 	}
 	
+	/**
+	 * Checks if the given interface is considered a valid IPv4 address
+	 * @param netint The interface
+	 * @return false if {@link #getIpv4Address(NetworkInterface)} returns {@link #NOT_VALID}. true otherwize.
+	 */
+	private boolean isInterfaceValid(NetworkInterface netint){
+		return !getIpv4Address(netint).equals(NOT_VALID);
+	}
+	
+	/**
+	 * Puts the Interface Information in a multi-lined human readable String.
+	 * @param netint The network interface to be displayed
+	 * @return The readable multi-lined String holding Information about the Interface
+	 */
 	private String getInterfaceInformation(NetworkInterface netint) {
 		String str = "";
 		str += "Display name: " + netint.getDisplayName() + "\n";
@@ -146,15 +184,19 @@ public class QRFrame extends JFrame {
         return str.substring(0, str.length()-1);
      }
 	
+	/**
+	 * Extracts the IPV4 address of the given interface. <br>The Loopback address ({@link #LOOPBACK}) is only considered as valid if Constructor {@link #QRFrame(boolean) QRFrame(true)} was used.
+	 * @param netInt The interface
+	 * @return The IP as a String or {@link #NOT_VALID} if no valid IP was found.
+	 */
 	private String getIpv4Address(NetworkInterface netInt){
-		String retVal = "No valid ip found";
+		String retVal = NOT_VALID;
 		
-		Matcher m;
-		
+		Matcher m;		
 		Enumeration<InetAddress> inetAddresses = netInt.getInetAddresses();
         for (InetAddress inetAddress : Collections.list(inetAddresses)) {
         	m = IP_PATTERN.matcher(inetAddress.toString());
-        	if(m.matches() && (loopbackValid || !inetAddress.toString().contains("127.0.0.1"))){
+        	if(m.matches() && (loopbackValid || !inetAddress.toString().contains(LOOPBACK))){
         		//System.out.println("found match with " + inetAddress.toString().substring(1));
         		return inetAddress.toString().substring(1);
         	}

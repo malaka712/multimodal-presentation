@@ -9,8 +9,8 @@
         android:angle="90"
         android:centerX="0.5"
         android:centerY="0.5"
-        android:startColor="#55EBCDC5"
-        android:endColor="#55FFFFFF"
+        android:startColor="#55BBCDC5"
+        android:endColor="#55CCCCCC"
         android:type="linear"/>
     
     <stroke 

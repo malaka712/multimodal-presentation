@@ -2,10 +2,14 @@ package de.mmi.multimodal_presentation;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +19,8 @@ import de.mmi.multimodal_presentation.settings.CacheClearActivity;
 
 public class InitActivity extends Activity {
 
+	private Button presentButton;
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,7 +29,7 @@ public class InitActivity extends Activity {
         /*
          * Get buttons via ID (as defined in layout-file)
          */
-        Button presentButton = (Button) findViewById(R.id.start_present_activity);
+        presentButton = (Button) findViewById(R.id.start_present_activity);
         Button scanButton = (Button) findViewById(R.id.scan_ip);
         
         /*
@@ -55,7 +61,15 @@ public class InitActivity extends Activity {
 				}.start();	
 			}
 		});
+        
+        /*
+         * Init broadcastreceiver..
+         */
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+        		mBroadcastReceiver, new IntentFilter(ConnectionService.IMAGE_RECEIVED_SUCCESSFULLY));
     }
+    
+    
     
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent){
@@ -123,4 +137,17 @@ public class InitActivity extends Activity {
     private void back(){
     	super.onBackPressed();
     }
+    
+    
+    /**
+     * Broadcastreceiver to receive notification from service as soon as images were retrieved successfully
+     */   
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if(intent.getAction().equals(ConnectionService.IMAGE_RECEIVED_SUCCESSFULLY)){
+				presentButton.setEnabled(true);
+			}
+		}
+    }; 
 }

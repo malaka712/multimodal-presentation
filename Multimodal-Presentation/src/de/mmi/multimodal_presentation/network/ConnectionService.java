@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -40,6 +41,8 @@ public class ConnectionService extends Service{
 	public final static float HIDE_POINTER = -2.0f;
 	public final static String EXIT = "exit";
 	public final static String START = "start";
+	
+	public final static String IMAGE_RECEIVED_SUCCESSFULLY = "success";
 	
 	public final static String IP = "ip";
 	
@@ -377,6 +380,8 @@ public class ConnectionService extends Service{
 				
 				Log.i("tag", "Done loading images.");
 
+				sendInfoBroadcast(IMAGE_RECEIVED_SUCCESSFULLY);
+				
 				handler.post(new Runnable() {				
 					@Override
 					public void run() {
@@ -400,6 +405,10 @@ public class ConnectionService extends Service{
 					} catch (IOException e) {}
 				}
 			}
+		}
+		
+		private void sendInfoBroadcast(String value){
+			LocalBroadcastManager.getInstance(ConnectionService.this).sendBroadcast(new Intent(value));
 		}
 	}
 }
