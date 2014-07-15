@@ -20,6 +20,8 @@ public class WaitFrame extends JFrame{
 	public WaitFrame(){
 		super("Decoding");
 	
+		setUndecorated(true);
+		
 		Container pane = this.getContentPane();
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
@@ -39,6 +41,7 @@ public class WaitFrame extends JFrame{
 		if(b){
 			this.pack();
 			this.setLocationRelativeTo(null);
+			this.setAlwaysOnTop(true);
 		}
 		
 		super.setVisible(b);

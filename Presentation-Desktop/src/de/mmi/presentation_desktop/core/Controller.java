@@ -185,11 +185,13 @@ public class Controller implements GUIHandler, PointerHandler, TimerListener {
 	public void newPDF(final File pdfFile){
 		final WaitFrame wf = new WaitFrame();
 		wf.setVisible(true);
+		mainWindow.setButtonEnabled(false);
 		new Thread(){
 			public void run(){
 				pdfViewer.setFile(pdfFile);
 				pdfViewer.init();
 				wf.setVisible(false);
+				mainWindow.setButtonEnabled(true);
 				mainWindow.next();
 				// TODO: don't show QR-Frame, but Time-Frame instead to set time for presentation
 				//showQRAndStartServer();
@@ -250,6 +252,7 @@ public class Controller implements GUIHandler, PointerHandler, TimerListener {
 		TimeFrame tFrame = new TimeFrame(this, mainWindow);
 		tFrame.pack();
 		tFrame.setVisible(true);
+		mainWindow.setButtonEnabled(false);
 	}
 
 	@Override
@@ -258,10 +261,12 @@ public class Controller implements GUIHandler, PointerHandler, TimerListener {
 		System.out.println("time set to " + seconds + " seconds");
 		mainWindow.next();
 		showQRAndStartServer();
+		mainWindow.setButtonEnabled(true);
 	}
 
 	@Override
 	public void onCancel(){
 		mainWindow.redo();
+		mainWindow.setButtonEnabled(true);
 	}
 }

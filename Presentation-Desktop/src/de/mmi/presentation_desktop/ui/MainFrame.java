@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +16,6 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.OverlayLayout;
 
@@ -35,8 +36,11 @@ public class MainFrame extends JFrame{
 			new Rectangle(630, 358, 46, 76)
 		};
 	
+	private final static Rectangle exitBounds = new Rectangle(665, 5, 30, 30);
+	
 	private final static int CHOOSE_PRESENTATION = 0;
 	private final static int SET_TIME = 1;
+	private final static int SCAN_QR_CODE = 2;
 	
 	private final static String[] toolTips = new String[]{
 			"Open Window to choose PDF-Presentation",
@@ -45,17 +49,28 @@ public class MainFrame extends JFrame{
 			"Start presentation using your Smartphone"
 		};
 	
-	private JLayeredPane layer;
-	private JPanel buttonPanel;
+	private JPanel layer;
+	//private JPanel buttonPanel;
 	
 	/**
 	 * The button that will be displayed to choose presentation and indicate current steps to be done for user
 	 */
 	private JButton actionButton;
+	/**
+	 * Will be used to close window (and therefore exit App)
+	 */
 	private JButton exitButton;
-	
+	/**
+	 * Need to repaint Buttons on being set visible first time
+	 */
+	private boolean firstTime = true;
+	/**
+	 * Counter used to determine where button is / what functionality used
+	 */
 	private int boundIndex = 0;
-	
+	/**
+	 * Parent for callback
+	 */
 	private Controller controller;
 	
 	public MainFrame(Controller controller){
@@ -72,18 +87,23 @@ public class MainFrame extends JFrame{
 	
 	private void initComponents(){
 		
+		this.setUndecorated(true);
+		
 		// main pane where the components are drawn above each other
-		layer = new JLayeredPane();
+		layer = new JPanel(){
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -4040946267324782193L;
+			public boolean isOptimizedDrawingEnabled() {
+				return false;
+			}
+		};
 		layer.setLayout(new OverlayLayout(layer));
 		
 		// own panel that haas the image as background
 		final ImagePanel imgP = new ImagePanel();
 
-		// transparent panel without layoutmanager (drawn above imagepanel)
-		buttonPanel = new JPanel();
-		buttonPanel.setLayout(null);
-		buttonPanel.setBackground(new Color(0, 0, 0, 0));
-		
 		ClassLoader loader = MainFrame.class.getClassLoader();
 		BufferedImage in = null;
 		try {
@@ -99,19 +119,17 @@ public class MainFrame extends JFrame{
 			e1.printStackTrace();
 		}
 		
-		// add panels to layout		
-		layer.add(imgP);
-		layer.add(buttonPanel);
-				
+		// exitbutton at top right corner, icon is an "x"		
 		URL path = loader.getResource("exit.png");
-		//System.out.println("Read path: " + path);
 		ImageIcon exitIcon = new ImageIcon(path);
 		exitButton = new JButton();
 		exitButton.setToolTipText("Close Application");
-		exitButton.setBackground(new Color(0,0,0,0));
+		exitButton.setBackground(new Color(1f,1f,1f));
+		exitButton.setContentAreaFilled(false);
 		exitButton.setIcon(exitIcon);
 		exitButton.setBorder(null);
-		//exitButton.setFocusable(false);
+		exitButton.setFocusable(false);
+		exitButton.setBounds(exitBounds);
 		exitButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -121,14 +139,37 @@ public class MainFrame extends JFrame{
 			}
 		});
 		
+		// mouse listener to paint background if mouse is in region and stop painting background if mouse leaves button region
+		exitButton.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				exitButton.setContentAreaFilled(false);
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				exitButton.setContentAreaFilled(true);
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {}
+		});
+		
 		// a button only consisting of a blue background. Will be located within the screens of the background image
 		actionButton = new JButton();
-		actionButton.setBackground(new Color(0, 0, 0.5f, 0.5f));
+		actionButton.setBackground(new Color(0, 0, 0.5f, 1f));
 		actionButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+
 				Runnable r = null;
 				
 				switch(boundIndex){
@@ -148,41 +189,48 @@ public class MainFrame extends JFrame{
 						}
 					};
 					break;
+					
+				case SCAN_QR_CODE:
+					r = new Runnable(){
+						@Override
+						public void run(){
+							controller.showQRAndStartServer();
+						}
+					};
 				}
 				
 				if (r != null)
 					new Thread(r).start();
 
-				actionButton.setVisible(false);
 			}
 		});
 		
-		buttonPanel.add(actionButton);
-		actionButton.setBounds(buttonBounds[boundIndex]);
-		//layer.add(actionButton);
+		layer.add(exitButton);
+		layer.add(actionButton);
+		layer.add(imgP);
+		updateButtonBounds();
 		this.add(layer);
 	}
 	
+	// set new position of actionButton and reset exit-button position
 	private void updateButtonBounds(){
-		this.repaint();
+		actionButton.setVisible(true);
 		actionButton.setToolTipText(toolTips[boundIndex]);
 		actionButton.setBounds(buttonBounds[boundIndex]);
-		actionButton.repaint();
-		buttonPanel.repaint();
+		exitButton.setBounds(exitBounds);
 	}
 
+	/**
+	 * Go to next step (e.g. if presentation was chosen, button will be set to "set time""
+	 */
 	public void next(){
-		
 		boundIndex = (boundIndex+1)%buttonBounds.length;
-		/*if(boundIndex >= (buttonBounds.length/2))
-			enabled = false;*/
 		updateButtonBounds();
-		
-		//actionButton.setEnabled(enabled);
-		
-		actionButton.setVisible(true);
 	}
 	
+	/**
+	 * Current step was aborted. Show actionButton at old position
+	 */
 	public void redo(){
 		this.setButtonVisible(true);
 	}
@@ -191,14 +239,28 @@ public class MainFrame extends JFrame{
 		actionButton.setVisible(visible);
 	}
 	
+	public void setButtonEnabled(boolean enabled){
+		actionButton.setEnabled(enabled);
+	}
+	
 	@Override
-	public void setVisible(boolean b) {
-		//if(b)
-			//buttonPanel.repaint();
+	public void setVisible(boolean b){
+		if(b && firstTime){
+			firstTime = false;
+			new Thread(){
+				public void run(){
+					// not sure why, but button will not accept position on first showing if this is not done
+					try {
+						Thread.sleep(10L);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					updateButtonBounds();
+				}
+			}.start();
+		}
 		
 		super.setVisible(b);
 	}
-	
-	
-		
+
 }
