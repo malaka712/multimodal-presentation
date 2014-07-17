@@ -251,6 +251,7 @@ public class Controller implements GUIHandler, PointerHandler, TimerListener {
 	public void setTime() {
 		TimeFrame tFrame = new TimeFrame(this, mainWindow);
 		tFrame.pack();
+		tFrame.setLocationRelativeTo(mainWindow);
 		tFrame.setVisible(true);
 		mainWindow.setButtonEnabled(false);
 	}

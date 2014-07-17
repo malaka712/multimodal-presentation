@@ -38,8 +38,6 @@ public class TimeFrame extends JFrame{
 		super("Set Time for Presentation");
 		this.listener = listener;
 		initComponents();
-		
-		setLocationRelativeTo(parent);
 	}
 	
 	private void initComponents(){

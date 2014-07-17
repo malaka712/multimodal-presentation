@@ -135,7 +135,7 @@ public class MainFrame extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// exit application if exit-button is pressed..
-				MainFrame.this.dispose();			
+				System.exit(0);
 			}
 		});
 		
