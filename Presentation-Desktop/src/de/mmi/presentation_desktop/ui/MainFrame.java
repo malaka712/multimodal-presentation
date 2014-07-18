@@ -55,7 +55,7 @@ public class MainFrame extends JFrame{
 	/**
 	 * The button that will be displayed to choose presentation and indicate current steps to be done for user
 	 */
-	private JButton actionButton;
+	private AnimatedButton actionButton;
 	/**
 	 * Will be used to close window (and therefore exit App)
 	 */
@@ -163,7 +163,8 @@ public class MainFrame extends JFrame{
 		});
 		
 		// a button only consisting of a blue background. Will be located within the screens of the background image
-		actionButton = new JButton();
+		//actionButton = new JButton();
+		actionButton = new AnimatedButton();
 		actionButton.setBackground(new Color(0, 0, 0.5f, 1f));
 		actionButton.addActionListener(new ActionListener() {
 			
