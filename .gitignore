@@ -56,3 +56,6 @@ build/
 
 #NDK
 obj/
+
+#Target folder
+**/target/
